@@ -19,7 +19,7 @@ char readInput() {
         init();
         commands = fgets(commands, ARG_MAX, stdin);
 
-        if (commands == EOF || commands == '\n' || strncmp(commands, "exit", ARG_MAX) == 0) {
+        if (commands == EOF || commands == '\n' || strncmp(commands, "exit", 4) == 0) {
             return 0;
         }
 
