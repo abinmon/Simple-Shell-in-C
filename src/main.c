@@ -7,6 +7,6 @@
 int main(void) {
 	char commands[ARG_MAX];
 	init();
-	readInput(commands);
+  	readInput(commands);
 	exit(0);
 }

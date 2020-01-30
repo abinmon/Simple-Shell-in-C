@@ -11,15 +11,12 @@ void init() {
 }
 
 void readInput(char* commands) {
-	gets(commands);
-  char *cmd;
+    gets(commands);
+	char *cmd;
 
-  cmd = strtok(commands, " ");
-  while( cmd != NULL ) {
-  	printf("%s\n", cmd);
-
-		cmd = strtok(NULL, " ");
-  }
-
-
+    cmd = strtok(commands, " ");
+    while( cmd != NULL ) {
+        printf("%s\n", cmd);
+        cmd = strtok(NULL, " ");
+    }
 }
