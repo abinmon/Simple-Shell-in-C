@@ -2,11 +2,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "simpleShell.h"
-#define ARG_MAX 32000
+#include "string.h"
+#define ARG_MAX 512
 
 int main(void) {
 	char commands[ARG_MAX];
 	init();
-  	readInput(commands);
+	do{
+	    printf("$ ");
+  	    readInput(fgets(commands, sizeof(commands), stdin));
+	} while(commands != "exit");
 	exit(0);
 }
