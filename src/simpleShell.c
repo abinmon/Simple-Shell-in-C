@@ -11,22 +11,28 @@ void init() {
     printf("$ ");
 }
 
-char readInput() {
+void readInput() {
     char *cmd;
-    char *commands = malloc(sizeof(char)*ARG_MAX);
-
+    char *buffer = malloc(sizeof(char)*ARG_MAX);
     while(1) {
         init();
-        commands = fgets(commands, ARG_MAX, stdin);
-
-        if (commands == EOF || commands == '\n' || strncmp(commands, "exit", 4) == 0) {
-            return 0;
+        fgets(buffer, ARG_MAX, stdin);
+        fflush(stdin);
+        // Check for exit
+        if (buffer == NULL || strncmp(buffer, "exit", 4) == 0) {
+            break;
         }
+        // Check if empty string passed
+        if (buffer[0] != '\n') {
+            // Print indentation
+            printf("  ");
+            // Divide string in tokens
+            cmd = strtok(buffer, " ");
 
-        cmd = strtok(commands, " ");
-        while( cmd != NULL ) {
-            printf("%s ", cmd);
-            cmd = strtok(NULL, " ");
+            while( cmd != NULL ) {
+                printf("\"%s\" ", cmd);
+                cmd = strtok(NULL, " ");
+            }
         }
     }
 }

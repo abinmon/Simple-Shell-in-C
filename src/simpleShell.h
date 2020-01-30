@@ -1,3 +1,3 @@
 /* Header File */
 void init();
-char readInput();
+void readInput();
