@@ -17,10 +17,10 @@ void readInput() {
 
     while(1) {
         init();
-        fgets(buffer, ARG_MAX, stdin);
+        char* C = fgets(buffer, ARG_MAX, stdin);
         fflush(stdin);
         // Check for exit
-        if (buffer == NULL || strncmp(buffer, "exit", 4) == 0) {
+        if (C == NULL || strncmp(buffer, "exit", 4) == 0) {
             break;
         }
 
