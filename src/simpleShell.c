@@ -17,24 +17,21 @@ void readInput() {
 
     while(1) {
         init();
-        char* C = fgets(buffer, ARG_MAX, stdin);
-        fflush(stdin);
         // Check for exit
-        if (C == NULL || strncmp(buffer, "exit", 4) == 0) {
+        if (fgets(buffer, ARG_MAX, stdin) == NULL || strncmp(buffer, "exit", 4) == 0) {
             break;
         }
 
-
+        fflush(stdin);
 
         // Check if empty string passed
         if (buffer[0] != '\n') {
-            // Print indentation
-            printf("  ");
             // Divide string in tokens
-            cmd = strtok(buffer, " ");
+            cmd = strtok(buffer, " \n");
+            // Print indentation
             while( cmd != NULL ) {
-                printf("\"%s \"", cmd);
-                cmd = strtok(NULL, " ");
+                printf("\"%s\"\n", cmd);
+                cmd = strtok(NULL, " \n");
             }
         }
     }
