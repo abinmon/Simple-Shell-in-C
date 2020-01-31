@@ -24,6 +24,8 @@ void readInput() {
             break;
         }
 
+
+
         // Check if empty string passed
         if (buffer[0] != '\n') {
             // Print indentation
