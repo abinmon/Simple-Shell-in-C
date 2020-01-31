@@ -5,7 +5,7 @@
 #define ARG_MAX 512
 
 void init() {
-	char* username = getenv("USERNAME");
+	char* username = getenv("USER");
 	printf("\nuser@%s", username);
 	printf("\n");
     printf("$ ");
