@@ -18,6 +18,7 @@ void readInput() {
 
     while(1) {
         init();
+
         char *c = fgets(buffer, ARG_MAX, stdin);
 
         // Remove leading spaces when exit is entered
