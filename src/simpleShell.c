@@ -2,7 +2,6 @@
 #include "string.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <ctype.h>
 #define ARG_MAX 512
 
 void init() {
@@ -18,16 +17,8 @@ void readInput() {
 
     while(1) {
         init();
-
-        char *c = fgets(buffer, ARG_MAX, stdin);
-
-        // Remove leading spaces when exit is entered
-        while (isspace(*buffer))
-        {
-            buffer = buffer + 1;
-        }
         // Check for exit
-        if (c == NULL || strncmp(buffer, "exit", 4) == 0) {
+        if (fgets(buffer, ARG_MAX, stdin) == NULL || strncmp(buffer, "exit", 4) == 0) {
             break;
         }
 
