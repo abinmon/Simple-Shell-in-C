@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/mnt/c/Users/user/git/cs210-simple-group-30/src/main.c
+simpleShell.h
+/mnt/c/Users/user/git/cs210-simple-group-30/src/simpleShell.h
+
+/mnt/c/Users/user/git/cs210-simple-group-30/src/simpleShell.c
+simpleShell.h
+/mnt/c/Users/user/git/cs210-simple-group-30/src/simpleShell.h
+string.h
+/mnt/c/Users/user/git/cs210-simple-group-30/src/string.h
+stdio.h
+-
+stdlib.h
+-
+ctype.h
+-
+
+/mnt/c/Users/user/git/cs210-simple-group-30/src/simpleShell.h
+
