@@ -1,13 +1,4 @@
 #include "simpleShell.h"
-#include "string.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <unistd.h>
-#include <dirent.h>
-#include <errno.h>
-
-#define ARG_MAX 512
 
 void init() {
 	char* username = getenv("USER");
@@ -35,17 +26,18 @@ void readInput(char * oldPath) {
             ++buffer;
         }
         // Check for exit
-        if (c == NULL || strcmp(buffer, "exit") == 0) {
+        if (c == NULL ||  (strcmp(buffer, "exit") > 0 && strlen(c) == 5)) {
             printf("%s\n", oldPath);
             break;
         }
 
         fflush(stdin);
 
-        if (strncmp(buffer, "getpath", 7) == 0) {
-            printf("%s", getPath());
-        } else if (strncmp(buffer, "setpath", 7) == 0) {
-            setPath(buffer);
+        char *firstToken = getToken(buffer, 0);
+        if (strncmp(firstToken, "getpath", 7) == 0) {
+            printf("%s\n", getPath());
+        } else if (strncmp(firstToken, "setpath", 7) == 0) {
+            setPath(getToken(buffer, 1));
         } else {
             system(buffer);
         }
@@ -57,27 +49,41 @@ char * getPath() {
     return getenv("PATH");
 }
 
+char * getToken(char * cmd, int index) {
+    char *tokensList[50];
+    // Copy variable in temp variable
+    char* tempStr = calloc(strlen(cmd)+1, sizeof(char));
+    strcpy(tempStr, cmd);
+    // Divide in tokens
+    char *token = strtok(tempStr, " \n");
+    int i = 0;
+    // walk through other tokens
+    while( token != NULL ) {
+        tokensList[i] = token;
+        token = strtok(NULL, " \n");
+        i++;
+    }
+    fflush(stdin);
+    return tokensList[index];
+}
+
 void setPath(char* newPath) {
-    char *cmd;
-    // Get second token and set the path
-    strtok(newPath, " \n");
-    cmd = strtok(NULL, " \n");
-    if (checkDirectory(cmd) == 1) {
-        setenv("PATH", cmd, 1);
-        printf("New Path: %s\n", getPath());
+    if (checkDirectory(newPath) == 1) {
+        setenv("PATH", newPath, 1);
+//        printf("New Path: %s\n", getPath());
     } else {
-        printf("%s", "No such file or directory\n");
+        printf("%s\n", "No such file or directory");
     }
 }
 
 int checkDirectory(char* s) {
     DIR* dir = opendir(s);
     if (dir) {
-        // Directory exists
+        // Directory or file exists
         closedir(dir);
         return 1;
     } else if (ENOENT == errno) {
-        // Directory does not exist
+        // Directory or file does not exist
         return 0;
     } else {
         // opendir() failed for some other reason

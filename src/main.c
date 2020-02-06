@@ -2,8 +2,8 @@
 #include "simpleShell.h"
 
 int main(void) {
-    // Store old path
-    char* oldPath = getPath();
-    readInput(oldPath);
+    // Store current path
+    char* currPath = getPath();
+    readInput(currPath);
 	return 0;
 }
