@@ -27,7 +27,7 @@ void readInput() {
             buffer = buffer + 1;
         }
         // Check for exit
-        if (c == NULL || strncmp(buffer, "exit", 4) == 0) {
+        if (c == NULL || strcmp(buffer, "exit") == 0) {
             break;
         }
 
@@ -36,11 +36,11 @@ void readInput() {
         // Check if empty string passed
         if (buffer[0] != '\n') {
             // Divide string in tokens
-            cmd = strtok(buffer, " \n");
+            cmd = strtok(buffer, " \n\t;><&|");
             // Print indentation
             while( cmd != NULL ) {
                 printf("\"%s\"\n", cmd);
-                cmd = strtok(NULL, " \n");
+                cmd = strtok(NULL, " \n\t;><&|");
             }
         }
     }
