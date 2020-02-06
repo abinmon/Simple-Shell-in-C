@@ -1,3 +1,4 @@
+
 #include "simpleShell.h"
 #include "string.h"
 #include <stdio.h>
@@ -11,6 +12,7 @@ void init() {
 	printf("\n");
     printf("$ ");
 }
+
 
 void readInput() {
     char *cmd;
@@ -27,9 +29,10 @@ void readInput() {
             buffer = buffer + 1;
         }
         // Check for exit
-        if (c == NULL || strcmp(buffer, "exit") == 0) {
+        if (c == NULL || ((strcmp(buffer, "exit")>0)&&(strlen(c) == 5))) {
             break;
         }
+
 
         fflush(stdin);
 
