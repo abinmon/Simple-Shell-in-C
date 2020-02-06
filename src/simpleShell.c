@@ -4,7 +4,7 @@ void init() {
 	char* username = getenv("USER");
     char cwd[ARG_MAX];
     // Set the current working directory to home
-    chdir(getenv("HOME"));
+//    chdir(getenv("HOME"));
     printf("Current working dir: %s\n", getcwd(cwd, sizeof(cwd)));
     printf("\nuser@%s", username);
 	printf("\n");
@@ -33,15 +33,36 @@ void readInput(char * oldPath) {
 
         fflush(stdin);
 
-        char *firstToken = getToken(buffer, 0);
-        if (strncmp(firstToken, "getpath", 7) == 0) {
+        char **tokens;
+        tokens = getTokens(buffer);
+        if (strncmp(tokens[0], "getpath", 7) == 0) {
             printf("%s\n", getPath());
-        } else if (strncmp(firstToken, "setpath", 7) == 0) {
-            setPath(getToken(buffer, 1));
+        } else if (strncmp(tokens[0], "setpath", 7) == 0) {
+            setPath(tokens[1]);
         } else {
-            system(buffer);
+            runCommand(tokens);
         }
 
+    }
+}
+
+void runCommand(char *ls_args[]) {
+    pid_t c_pid, pid;
+    int status;
+    c_pid = fork();
+
+    if (c_pid == -1) {
+        perror("fork failed");
+        _exit(1);
+    }
+    if (c_pid == 0) {
+        execvp(ls_args[0], ls_args);
+        perror("execv failed");
+    } else if (c_pid > 0) {
+        if ( (pid = wait(&status)) < 0) {
+            perror("wait failed");
+            _exit(1);
+        }
     }
 }
 
@@ -49,8 +70,8 @@ char * getPath() {
     return getenv("PATH");
 }
 
-char * getToken(char * cmd, int index) {
-    char *tokensList[50];
+char** getTokens(char * cmd) {
+    static char *tokensList[] = {NULL};
     // Copy variable in temp variable
     char* tempStr = calloc(strlen(cmd)+1, sizeof(char));
     strcpy(tempStr, cmd);
@@ -63,14 +84,13 @@ char * getToken(char * cmd, int index) {
         token = strtok(NULL, " \n");
         i++;
     }
-    fflush(stdin);
-    return tokensList[index];
+    tokensList[i] = NULL;
+    return tokensList;
 }
 
 void setPath(char* newPath) {
     if (checkDirectory(newPath) == 1) {
         setenv("PATH", newPath, 1);
-//        printf("New Path: %s\n", getPath());
     } else {
         printf("%s\n", "No such file or directory");
     }
