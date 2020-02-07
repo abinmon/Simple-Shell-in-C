@@ -14,7 +14,7 @@ void init();
 char ** getTokens(char * cmd);
 void readInput(char* currPath);
 int checkDirectory(char* s);
-char * getPath();
+void getPath();
 void setPath(char* newPath);
 void runCommand(char *tokens[]);
 void chwDir();

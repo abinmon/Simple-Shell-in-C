@@ -33,51 +33,48 @@ void readInput(char * oldPath) {
         if (c == NULL ||  (strcmp(buffer, "exit") > 0 && strlen(c) == 5)) {
             // Restore old Path
             setenv("PATH", oldPath, 1);
-            printf("%s\n", getenv("PATH"));
+            getPath();
             break;
         }
 
         fflush(stdin);
 
-        char **tokens;
-        tokens = getTokens(buffer);
-        if (strncmp(tokens[0], "getpath", 7) == 0) {
-            printf("%s\n", getPath());
-        } else if (strncmp(tokens[0], "setpath", 7) == 0) {
-            if (tokens[1]) {
+        if (buffer[0] != '\0') {
+            char **tokens;
+            tokens = getTokens(buffer);
+            if (strncmp(tokens[0], "getpath", 7) == 0) {
+                getPath();
+            } else if (strncmp(tokens[0], "setpath", 7) == 0) {
                 setPath(tokens[1]);
             } else {
-                printf("%s\n", "No such file or directory");
+                runCommand(tokens);
             }
-        } else {
-            runCommand(tokens);
         }
 
     }
 }
 
 void runCommand(char *ls_args[]) {
-    pid_t c_pid, pid;
-    int status;
+    pid_t c_pid;
     c_pid = fork();
 
-    if (c_pid == -1) {
+    if (c_pid < 0) {
         perror("fork failed");
-        _exit(1);
+        exit(1);
     }
     if (c_pid == 0) {
-        execvp(ls_args[0], ls_args);
-        perror("execv failed");
-    } else if (c_pid > 0) {
-        if ( (pid = wait(&status)) < 0) {
-            perror("wait failed");
-            _exit(1);
+        if (execvp(ls_args[0], ls_args) < 0) {
+            perror(ls_args[0]);
+            exit(1);
         }
+        exit(0);
+    } else {
+        wait(NULL);
     }
 }
 
-char * getPath() {
-    return getenv("PATH");
+void getPath() {
+    printf("%s\n", getenv("PATH"));
 }
 
 char** getTokens(char * cmd) {
@@ -99,9 +96,8 @@ char** getTokens(char * cmd) {
 }
 
 void setPath(char* newPath) {
-    if (checkDirectory(newPath) == 1) {
+    if (newPath) {
         setenv("PATH", newPath, 1);
-        printf("%s", getPath());
     } else {
         printf("%s\n", "No such file or directory");
     }
