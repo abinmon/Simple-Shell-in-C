@@ -2,13 +2,17 @@
 
 void init() {
 	char* username = getenv("USER");
-    char cwd[ARG_MAX];
-    // Set the current working directory to home
-//    chdir(getenv("HOME"));
-    printf("Current working dir: %s\n", getcwd(cwd, sizeof(cwd)));
     printf("\nuser@%s", username);
 	printf("\n");
     printf("$ ");
+}
+
+void chwDir() {
+    char cwd[ARG_MAX];
+    printf("Old working dir: %s\n", getcwd(cwd, sizeof(cwd)));
+    // Set the current working directory to home
+    chdir(getenv("HOME"));
+    printf("Current working dir: %s\n", getcwd(cwd, sizeof(cwd)));
 }
 
 
@@ -27,7 +31,9 @@ void readInput(char * oldPath) {
         }
         // Check for exit
         if (c == NULL ||  (strcmp(buffer, "exit") > 0 && strlen(c) == 5)) {
-            printf("%s\n", oldPath);
+            // Restore old Path
+            setenv("PATH", oldPath, 1);
+            printf("%s\n", getenv("PATH"));
             break;
         }
 
@@ -38,7 +44,11 @@ void readInput(char * oldPath) {
         if (strncmp(tokens[0], "getpath", 7) == 0) {
             printf("%s\n", getPath());
         } else if (strncmp(tokens[0], "setpath", 7) == 0) {
-            setPath(tokens[1]);
+            if (tokens[1]) {
+                setPath(tokens[1]);
+            } else {
+                printf("%s\n", "No such file or directory");
+            }
         } else {
             runCommand(tokens);
         }
@@ -91,6 +101,7 @@ char** getTokens(char * cmd) {
 void setPath(char* newPath) {
     if (checkDirectory(newPath) == 1) {
         setenv("PATH", newPath, 1);
+        printf("%s", getPath());
     } else {
         printf("%s\n", "No such file or directory");
     }
