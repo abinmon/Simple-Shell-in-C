@@ -1,7 +1,7 @@
 #include "simpleShell.h"
 
 void init() {
-	char* username = getenv("USER");
+	String username = getenv("USER");
     printf("\nuser@%s", username);
 	printf("\n");
     printf("$ ");
@@ -16,13 +16,15 @@ void chwDir() {
 }
 
 
-void readInput(char * oldPath) {
-    char *buffer = malloc(sizeof(char)*ARG_MAX);
+void readInput(String oldPath) {
+    String buffer = malloc(sizeof(char)*ARG_MAX);
+    char history[ARR_SIZE][ARG_MAX] = {0};
+    int cmdNumber = 0;
 
     while(1) {
         init();
 
-        char *c = fgets(buffer, ARG_MAX, stdin);
+        String c = fgets(buffer, ARG_MAX, stdin);
 
         // Remove leading spaces when exit is entered
         while (isspace(*buffer))
@@ -30,7 +32,7 @@ void readInput(char * oldPath) {
             ++buffer;
         }
         // Check for exit
-        if (c == NULL ||  (strcmp(buffer, "exit") > 0 && strlen(c) == 5)) {
+        if (c == NULL ||  strcmp(buffer, "exit\n") == 0) {
             // Restore old Path
             setenv("PATH", oldPath, 1);
             getPath();
@@ -40,21 +42,31 @@ void readInput(char * oldPath) {
         fflush(stdin);
 
         if (buffer[0] != '\0') {
-            char **tokens;
+
+            // Store History
+            if(buffer[0] != '!') {
+                storeHistory(history, &cmdNumber, buffer);
+            }
+
+            String* tokens;
             tokens = getTokens(buffer);
             if (strncmp(tokens[0], "getpath", 7) == 0) {
                 getPath();
             } else if (strncmp(tokens[0], "setpath", 7) == 0) {
                 setPath(tokens[1]);
-            } else {
+            } else if (strncmp(tokens[0], "history", 7) == 0) {
+                getFullHistory(history, cmdNumber);
+            } else if (buffer[0] == '!') {
+                extractHistory(tokens, history, cmdNumber);
+            }
+            else {
                 runCommand(tokens);
             }
         }
-
     }
 }
 
-void runCommand(char *ls_args[]) {
+void runCommand(String ls_args[]) {
     pid_t c_pid;
     c_pid = fork();
 
@@ -77,13 +89,13 @@ void getPath() {
     printf("%s\n", getenv("PATH"));
 }
 
-char** getTokens(char * cmd) {
-    static char *tokensList[] = {NULL};
+String* getTokens(String cmd) {
+    static String tokensList[] = {NULL};
     // Copy variable in temp variable
-    char* tempStr = calloc(strlen(cmd)+1, sizeof(char));
+    String tempStr = calloc(strlen(cmd)+1, sizeof(char));
     strcpy(tempStr, cmd);
     // Divide in tokens
-    char *token = strtok(tempStr, " \n");
+    String token = strtok(tempStr, " \n");
     int i = 0;
     // walk through other tokens
     while( token != NULL ) {
@@ -95,7 +107,7 @@ char** getTokens(char * cmd) {
     return tokensList;
 }
 
-void setPath(char* newPath) {
+void setPath(String newPath) {
     if (newPath) {
         setenv("PATH", newPath, 1);
     } else {
@@ -103,7 +115,73 @@ void setPath(char* newPath) {
     }
 }
 
-int checkDirectory(char* s) {
+void storeHistory(char history[ARR_SIZE][ARG_MAX], int *cmdNum, String cmd) {
+    if (*cmdNum >= ARR_SIZE) {
+        printf("%d\n", *cmdNum);
+        // Shift elements to the left by one
+        // to add the new one
+        for (int i = 0; i < ARR_SIZE-1; i++) {
+            strcpy(history[i], history[i+1]);
+        }
+        strcpy(history[ARR_SIZE-1], cmd);
+    } else {
+        strcpy(history[*cmdNum], cmd);
+    }
+    *cmdNum = *cmdNum + 1;
+}
+
+void getFullHistory(char history[ARR_SIZE][ARG_MAX], int size) {
+    for(int i = 0; i < ARR_SIZE && i < size; i++) {
+        printf("%d. %s", i + 1, history[i]);
+    }
+}
+
+void getHistory(char history[ARR_SIZE][ARG_MAX], int index) {
+    if (index > 0 && index <= ARR_SIZE) {
+        char *cmd = history[--index];
+        // TODO run commands check
+        runCommand(getTokens(cmd));
+    } else {
+        printf("History is empty!\n");
+    }
+}
+
+void extractHistory(String* tokens, char history[ARR_SIZE][ARG_MAX], int cmdNumber) {
+    if (strncmp(tokens[0], "!!", 2) == 0) {
+        // Get last command history
+        getHistory(history, cmdNumber);
+    }
+    else {
+        String charIndex = NULL;
+        bool isRemainder = false;
+        char *ptr;
+        // Check if remainder command or normal
+        // by checking if command starts with !-
+        if (strncmp(tokens[0], "!-", strlen("!-")) == 0) {
+            // Take command number for remainder
+            charIndex = &tokens[0][2];
+            isRemainder = true;
+        } else {
+            // Take command number
+            charIndex = &tokens[0][1];
+        }
+        // Convert number from char to int
+        int index = (int) strtol(charIndex, &ptr, 10);
+        if (isRemainder == true) {
+            // Get remainder
+            index = cmdNumber - index;
+        }
+
+        // Check if index is in stored history
+        if (index <= cmdNumber) {
+            getHistory(history, index);
+        } else {
+            printf("History is empty!\n");
+        }
+    }
+}
+
+int checkDirectory(String s) {
     DIR* dir = opendir(s);
     if (dir) {
         // Directory or file exists

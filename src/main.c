@@ -3,7 +3,7 @@
 
 int main(void) {
     // Store current path
-    char* currPath = getenv("PATH");
+    String currPath = getenv("PATH");
     // Set Working directory to HOME
     chwDir();
     readInput(currPath);
