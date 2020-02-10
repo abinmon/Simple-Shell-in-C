@@ -50,19 +50,23 @@ void readInput(String oldPath) {
 
             String* tokens;
             tokens = getTokens(buffer);
-            if (strncmp(tokens[0], "getpath", 7) == 0) {
-                getPath();
-            } else if (strncmp(tokens[0], "setpath", 7) == 0) {
-                setPath(tokens[1]);
-            } else if (strncmp(tokens[0], "history", 7) == 0) {
-                getFullHistory(history, cmdNumber);
-            } else if (buffer[0] == '!') {
-                extractHistory(tokens, history, cmdNumber);
-            }
-            else {
-                runCommand(tokens);
-            }
+            checkInput(tokens, buffer, history, &cmdNumber);
         }
+    }
+}
+
+void checkInput(String* tokens, const char* buffer, char history[ARR_SIZE][ARG_MAX], const int *cmdNumber) {
+    if (strncmp(tokens[0], "getpath", 7) == 0) {
+        getPath();
+    } else if (strncmp(tokens[0], "setpath", 7) == 0) {
+        setPath(tokens[1]);
+    } else if (strncmp(tokens[0], "history", 7) == 0) {
+        getFullHistory(history, &(*cmdNumber));
+    } else if (buffer[0] == '!') {
+        extractHistory(tokens, history, &(*cmdNumber));
+    }
+    else {
+        runCommand(tokens);
     }
 }
 
@@ -130,26 +134,26 @@ void storeHistory(char history[ARR_SIZE][ARG_MAX], int *cmdNum, String cmd) {
     *cmdNum = *cmdNum + 1;
 }
 
-void getFullHistory(char history[ARR_SIZE][ARG_MAX], int size) {
-    for(int i = 0; i < ARR_SIZE && i < size; i++) {
+void getFullHistory(char history[ARR_SIZE][ARG_MAX], const int *size) {
+    for(int i = 0; i < ARR_SIZE && i < *size; i++) {
         printf("%d. %s", i + 1, history[i]);
     }
 }
 
 void getHistory(char history[ARR_SIZE][ARG_MAX], int index) {
     if (index > 0 && index <= ARR_SIZE) {
-        char *cmd = history[--index];
-        // TODO run commands check
-        runCommand(getTokens(cmd));
+        int lessIndex = index;
+        char *cmd = history[--lessIndex];
+        checkInput(getTokens(cmd), cmd, history, &index);
     } else {
         printf("History is empty!\n");
     }
 }
 
-void extractHistory(String* tokens, char history[ARR_SIZE][ARG_MAX], int cmdNumber) {
+void extractHistory(String* tokens, char history[ARR_SIZE][ARG_MAX], const int *cmdNumber) {
     if (strncmp(tokens[0], "!!", 2) == 0) {
         // Get last command history
-        getHistory(history, cmdNumber);
+        getHistory(history, *cmdNumber);
     }
     else {
         String charIndex = NULL;
@@ -169,11 +173,11 @@ void extractHistory(String* tokens, char history[ARR_SIZE][ARG_MAX], int cmdNumb
         int index = (int) strtol(charIndex, &ptr, 10);
         if (isRemainder == true) {
             // Get remainder
-            index = cmdNumber - index;
+            index = *cmdNumber - index;
         }
 
         // Check if index is in stored history
-        if (index <= cmdNumber) {
+        if (index <= *cmdNumber) {
             getHistory(history, index);
         } else {
             printf("History is empty!\n");
