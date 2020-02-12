@@ -309,10 +309,11 @@ void unalias(String * token){
         }
 
     }
-     if(set == 0 && count == 1) {
-
-         printf("There is no such alias");
-     } else if(set == 1 && count == 0){
+//     if(set == 0 && count == 1) {
+//
+//       //  printf("There is no such alias");
+//     } else
+        if(set == 1 && count == 0){
         printf("Alias is empty");
 
     }
