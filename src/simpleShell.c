@@ -279,6 +279,8 @@ void addAlias(String *token) {
 }
 
 void unalias(String * token){
+    int set = 0;
+    int count = 0;
     if (token[1] == NULL){
         printf("Not enough arguments");
         return;
@@ -286,6 +288,7 @@ void unalias(String * token){
     if (token[2] != NULL ){
         printf("Too Many Arguments");
     }
+
     for (int i = 0; i < 10; i++) {
         if (strcmp(array[i].aliasName, token[1]) == 0) {
             strcpy(array[i].aliasName, "");
@@ -297,6 +300,21 @@ void unalias(String * token){
             printf("Alias Removed %s\n", token[1]);
             return;
         }
+        else if(strcmp(array[0].aliasName, "") == 0){
+            set = 1;
+            break;
+        }
+        else {
+            count = 1;
+        }
+
+    }
+     if(set == 0 && count == 1) {
+
+         printf("There is no such alias");
+     } else if(set == 1 && count == 0){
+        printf("Alias is empty");
+
     }
 
 }
