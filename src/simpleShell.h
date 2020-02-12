@@ -10,6 +10,15 @@
 #include <errno.h>
 #define ARG_MAX 512
 #define ARR_SIZE 20
+#define MAX_ALIAS 10
+
+struct alias {
+    char aliasName[ARG_MAX];
+    char aliasCommand[ARG_MAX];
+};
+typedef struct alias aliases;
+
+
 
 typedef char* String;
 typedef enum {true, false} bool;
@@ -22,7 +31,11 @@ void setPath(String newPath);
 void runCommand(String tokens[]);
 void chwDir();
 void storeHistory(char history[ARR_SIZE][ARG_MAX], int *cmdNum, String cmd);
-void getFullHistory(char history[ARR_SIZE][ARG_MAX], const int *size);
+const char * getFullHistory(char history[ARR_SIZE][ARG_MAX], const int *size);
 void getHistory(char history[ARR_SIZE][ARG_MAX], int index);
 void extractHistory(String* tokens, char history[ARR_SIZE][ARG_MAX], const int *cmdNumber);
-void checkInput(String* tokens,  const char* buffer, char history[ARR_SIZE][ARG_MAX], const int *cmdNumber);
+void checkInput(String* tokens, const char* buffer, char history[ARR_SIZE][ARG_MAX], const int *cmdNumber, String secondArgument);
+
+void unalias(String *tokens);
+void addAlias(String *tokens);
+void checkAlias(String *input);

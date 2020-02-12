@@ -1,5 +1,5 @@
 #include "simpleShell.h"
-
+aliases array[ARG_MAX];
 void init() {
 	String username = getenv("USER");
     printf("\nuser@%s", username);
@@ -25,6 +25,9 @@ void readInput(String oldPath) {
         init();
 
         String c = fgets(buffer, ARG_MAX, stdin);
+        String secondArgument = calloc(strlen(buffer)+1, sizeof(char));
+        strcpy(secondArgument,buffer);
+
 
         // Remove leading spaces when exit is entered
         while (isspace(*buffer))
@@ -50,12 +53,14 @@ void readInput(String oldPath) {
 
             String* tokens;
             tokens = getTokens(buffer);
-            checkInput(tokens, buffer, history, &cmdNumber);
+            checkInput(tokens, buffer, history, &cmdNumber, secondArgument);
         }
     }
 }
 
-void checkInput(String* tokens, const char* buffer, char history[ARR_SIZE][ARG_MAX], const int *cmdNumber) {
+void checkInput(String* tokens, const char* buffer, char history[ARR_SIZE][ARG_MAX], const int *cmdNumber, String secondArgument) {
+    checkAlias(&secondArgument);
+    getTokens(secondArgument);
     if (strncmp(tokens[0], "getpath", 7) == 0) {
         getPath();
     } else if (strncmp(tokens[0], "setpath", 7) == 0) {
@@ -64,6 +69,12 @@ void checkInput(String* tokens, const char* buffer, char history[ARR_SIZE][ARG_M
         getFullHistory(history, &(*cmdNumber));
     } else if (buffer[0] == '!') {
         extractHistory(tokens, history, &(*cmdNumber));
+    }
+    else if (strncmp(tokens[0], "alias", 5) == 0) {
+        addAlias(tokens);
+    }
+    else if (strncmp(tokens[0], "unalias", 5) == 0) {
+        unalias(tokens);
     }
     else {
         runCommand(tokens);
@@ -134,17 +145,18 @@ void storeHistory(char history[ARR_SIZE][ARG_MAX], int *cmdNum, String cmd) {
     *cmdNum = *cmdNum + 1;
 }
 
-void getFullHistory(char history[ARR_SIZE][ARG_MAX], const int *size) {
+const char * getFullHistory(char history[ARR_SIZE][ARG_MAX], const int *size) {
     for(int i = 0; i < ARR_SIZE && i < *size; i++) {
         printf("%d. %s", i + 1, history[i]);
     }
 }
 
 void getHistory(char history[ARR_SIZE][ARG_MAX], int index) {
+    String c = "";
     if (index > 0 && index <= ARR_SIZE) {
         int lessIndex = index;
         char *cmd = history[--lessIndex];
-        checkInput(getTokens(cmd), cmd, history, &index);
+        checkInput(getTokens(cmd), cmd, history, &index,c);
     } else {
         printf("History is empty!\n");
     }
@@ -198,4 +210,118 @@ int checkDirectory(String s) {
         // opendir() failed for some other reason
         return -1;
     }
+}
+
+void addAlias(String *token) {
+
+    int NumberOfAliases = 0;
+    //If there is more than one command
+    char wholeLineCommand[512] = {'\0'};
+    int i = 2;
+    while(token[i] != NULL){
+        strcat(wholeLineCommand, token[i]);
+        strcat(wholeLineCommand, " ");
+        i++;
+    }
+    for (int count = 0; count < 10; count++) {
+        if (array[count].aliasCommand[0] != '\0') {
+            NumberOfAliases++;
+        }
+    }
+    if ((token[1] == NULL)) {
+        if (NumberOfAliases == 0) {
+            printf("There are no current alias");
+        } else {
+            for (int i = 0; i < 10; i++) {
+                if (array[i].aliasCommand[0] != '\0') {
+                    printf("%d. %s ---- %s\n",i , array[i].aliasName, array[i].aliasCommand);
+                }
+            }
+        }
+    }
+    else if(token[2] == NULL) {
+        printf("Too Few Arguments");
+    }
+    else if(token[4] != NULL) {
+        printf("Too many Arguments");
+    }
+    else if(NumberOfAliases <= 11) {
+
+        //Null Terminating the whitespace
+        int len = strlen(wholeLineCommand);
+        wholeLineCommand[len - 1] = '\0';
+
+        //Look for duplicate aliases
+        for (int i = 0; i < 10; i++) {
+            if (strcmp(array[i].aliasName, token[1]) == 0) {
+                printf("Overwriting alias %s\n", token[1]);
+                strcpy(array[i].aliasName, token[1]);
+                strcpy(array[i].aliasCommand, wholeLineCommand);
+
+                return;
+            }
+        }
+
+        //Finding empty position
+        for (int i = 0; i < 10; i++) {
+            if (strcmp(array[i].aliasName, "") == 0) {
+                strcpy(array[i].aliasName, token[1]);
+                strcpy(array[i].aliasCommand, wholeLineCommand);
+                printf("New Alias %s -- %s\n", token[1], wholeLineCommand);
+
+                return;
+            }
+        }
+    }
+    else if (NumberOfAliases > 10){
+        printf("No more space for aliases\n");
+    }
+}
+
+void unalias(String * token){
+    if (token[1] == NULL){
+        printf("Not enough arguments");
+        return;
+    }
+    if (token[2] != NULL ){
+        printf("Too Many Arguments");
+    }
+    for (int i = 0; i < 10; i++) {
+        if (strcmp(array[i].aliasName, token[1]) == 0) {
+            strcpy(array[i].aliasName, "");
+            strcpy(array[i].aliasCommand, "");
+            strcpy(array[i].aliasName, array[i+1].aliasName);
+            strcpy(array[i].aliasCommand,array[i+1].aliasCommand);
+            strcpy(array[i+1].aliasName, "");
+            strcpy(array[i+1].aliasCommand,"");
+            printf("Alias Removed %s\n", token[1]);
+            return;
+        }
+    }
+
+}
+
+void checkAlias(String *input) {
+    char* token;
+    char line[512] = { '\0' };
+    //get command
+    token = strtok(*input, " \t;<>|\n&");
+    //look for an alias and get the alias command if one is foun
+    for(int j = 0; j < 10; j++) {
+        if(token != NULL && array[j].aliasName != NULL && (strcmp(token, array[j].aliasName) == 0)) {
+            token = array[j].aliasCommand;
+        }
+    }
+    // start building the actual line that must be executed
+    if (token != NULL) {
+        strcpy(line, token);
+    }
+    //get rest of original line after the possible alias
+    token = strtok(NULL, "");
+    if(token != NULL) {
+        strcat(line, " ");
+        strcat(line, token);
+    }
+
+    strcpy(*input, line);
 }
