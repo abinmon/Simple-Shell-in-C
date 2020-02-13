@@ -27,7 +27,7 @@ void readInput(String oldPath) {
         init();
 
         String c = fgets(buffer, ARG_MAX, stdin);
-        String secondArgument = calloc(strlen(buffer)+1, sizeof(char));
+        String secondArgument = calloc(strlen(buffer)*ARR_SIZE, sizeof(char));
         strcpy(secondArgument,buffer);
 
 
