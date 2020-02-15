@@ -11,6 +11,7 @@
 #define ARG_MAX 512
 #define ARR_SIZE 20
 #define MAX_ALIAS 10
+#define ERR_ARG_MAX "Too many arguments!\n"
 
 struct alias {
     char aliasName[ARG_MAX];
@@ -31,12 +32,13 @@ void setPath(String newPath);
 void runCommand(String tokens[]);
 void chwDir();
 void storeHistory(char history[ARR_SIZE][ARG_MAX], int *cmdNum, String cmd, String* tokens);
-void getFullHistory(char history[ARR_SIZE][ARG_MAX], const int *size);
-void getHistory(char history[ARR_SIZE][ARG_MAX], int index, const char delimiters[]);
-void extractHistory(String* tokens, char history[ARR_SIZE][ARG_MAX], int *cmdNumber, const char delimiters[]);
-void getIndexHistory(String charIndex, char history[ARR_SIZE][ARG_MAX], int *cmdNumber, const char delimiters[], bool isRemainder);
-void checkInput(String* tokens, const char* buffer, char history[ARR_SIZE][ARG_MAX], int *cmdNumber, String secondArgument, const char delimiters[], int* NumberOfAlias);
+void getFullHistory(char history[ARR_SIZE][ARG_MAX]);
+void getHistory(char history[ARR_SIZE][ARG_MAX], int index, const char delimiters[] , int *num, String secondArgument);
+void extractHistory(String* tokens, char history[ARR_SIZE][ARG_MAX], int *cmdNumber, const char delimiters[], int *num, String arg);
+void getIndexHistory(String charIndex, char history[ARR_SIZE][ARG_MAX], int *cmdNumber, const char delimiters[], bool isRemainder, int *num, String arg );
+void checkInput(String* tokens, const char* buffer, char history[ARR_SIZE][ARG_MAX], int *cmdNumber, const char delimiters[], int *Num, String arg);
 
 void unalias(String * token, int *NumberOfAliases);
 void addAlias(String *token, int* NumberOfAlias);
 void checkAlias(String *input);
+aliases array[ARG_MAX];
