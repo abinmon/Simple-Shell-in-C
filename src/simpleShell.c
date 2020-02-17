@@ -412,6 +412,7 @@ void getIndexHistory(String charIndex, char history[ARR_SIZE][ARG_MAX], int *cmd
  *
  * @param history
  * @param size
+ * 
  */
 void writeHistory(char history[ARR_SIZE][ARG_MAX], const int *size) {
     FILE *fp;
