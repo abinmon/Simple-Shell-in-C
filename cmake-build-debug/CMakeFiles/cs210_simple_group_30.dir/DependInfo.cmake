@@ -4,8 +4,8 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
-  "/mnt/c/Users/user/git/cs210-simple-group-30/src/main.c" "/mnt/c/Users/user/git/cs210-simple-group-30/cmake-build-debug/CMakeFiles/cs210_simple_group_30.dir/src/main.c.o"
-  "/mnt/c/Users/user/git/cs210-simple-group-30/src/simpleShell.c" "/mnt/c/Users/user/git/cs210-simple-group-30/cmake-build-debug/CMakeFiles/cs210_simple_group_30.dir/src/simpleShell.c.o"
+  "/mnt/c/Users/user/CLionProjects/cs210-simple-group-30/src/main.c" "/mnt/c/Users/user/CLionProjects/cs210-simple-group-30/cmake-build-debug/CMakeFiles/cs210_simple_group_30.dir/src/main.c.o"
+  "/mnt/c/Users/user/CLionProjects/cs210-simple-group-30/src/simpleShell.c" "/mnt/c/Users/user/CLionProjects/cs210-simple-group-30/cmake-build-debug/CMakeFiles/cs210_simple_group_30.dir/src/simpleShell.c.o"
   )
 set(CMAKE_C_COMPILER_ID "GNU")
 

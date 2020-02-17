@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /mnt/c/Users/user/git/cs210-simple-group-30
+CMAKE_SOURCE_DIR = /mnt/c/Users/user/CLionProjects/cs210-simple-group-30
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /mnt/c/Users/user/git/cs210-simple-group-30/cmake-build-debug
+CMAKE_BINARY_DIR = /mnt/c/Users/user/CLionProjects/cs210-simple-group-30/cmake-build-debug
 
 # Include any dependencies generated for this target.
 include CMakeFiles/cs210_simple_group_30.dir/depend.make
@@ -59,16 +59,16 @@ include CMakeFiles/cs210_simple_group_30.dir/flags.make
 
 CMakeFiles/cs210_simple_group_30.dir/src/main.c.o: CMakeFiles/cs210_simple_group_30.dir/flags.make
 CMakeFiles/cs210_simple_group_30.dir/src/main.c.o: ../src/main.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/mnt/c/Users/user/git/cs210-simple-group-30/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/cs210_simple_group_30.dir/src/main.c.o"
-	/usr/bin/cc  $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/cs210_simple_group_30.dir/src/main.c.o   -c /mnt/c/Users/user/git/cs210-simple-group-30/src/main.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/mnt/c/Users/user/CLionProjects/cs210-simple-group-30/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/cs210_simple_group_30.dir/src/main.c.o"
+	/usr/bin/cc  $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/cs210_simple_group_30.dir/src/main.c.o   -c /mnt/c/Users/user/CLionProjects/cs210-simple-group-30/src/main.c
 
 CMakeFiles/cs210_simple_group_30.dir/src/main.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/cs210_simple_group_30.dir/src/main.c.i"
-	/usr/bin/cc  $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /mnt/c/Users/user/git/cs210-simple-group-30/src/main.c > CMakeFiles/cs210_simple_group_30.dir/src/main.c.i
+	/usr/bin/cc  $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /mnt/c/Users/user/CLionProjects/cs210-simple-group-30/src/main.c > CMakeFiles/cs210_simple_group_30.dir/src/main.c.i
 
 CMakeFiles/cs210_simple_group_30.dir/src/main.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/cs210_simple_group_30.dir/src/main.c.s"
-	/usr/bin/cc  $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /mnt/c/Users/user/git/cs210-simple-group-30/src/main.c -o CMakeFiles/cs210_simple_group_30.dir/src/main.c.s
+	/usr/bin/cc  $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /mnt/c/Users/user/CLionProjects/cs210-simple-group-30/src/main.c -o CMakeFiles/cs210_simple_group_30.dir/src/main.c.s
 
 CMakeFiles/cs210_simple_group_30.dir/src/main.c.o.requires:
 
@@ -83,16 +83,16 @@ CMakeFiles/cs210_simple_group_30.dir/src/main.c.o.provides.build: CMakeFiles/cs2
 
 CMakeFiles/cs210_simple_group_30.dir/src/simpleShell.c.o: CMakeFiles/cs210_simple_group_30.dir/flags.make
 CMakeFiles/cs210_simple_group_30.dir/src/simpleShell.c.o: ../src/simpleShell.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/mnt/c/Users/user/git/cs210-simple-group-30/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/cs210_simple_group_30.dir/src/simpleShell.c.o"
-	/usr/bin/cc  $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/cs210_simple_group_30.dir/src/simpleShell.c.o   -c /mnt/c/Users/user/git/cs210-simple-group-30/src/simpleShell.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/mnt/c/Users/user/CLionProjects/cs210-simple-group-30/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/cs210_simple_group_30.dir/src/simpleShell.c.o"
+	/usr/bin/cc  $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/cs210_simple_group_30.dir/src/simpleShell.c.o   -c /mnt/c/Users/user/CLionProjects/cs210-simple-group-30/src/simpleShell.c
 
 CMakeFiles/cs210_simple_group_30.dir/src/simpleShell.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/cs210_simple_group_30.dir/src/simpleShell.c.i"
-	/usr/bin/cc  $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /mnt/c/Users/user/git/cs210-simple-group-30/src/simpleShell.c > CMakeFiles/cs210_simple_group_30.dir/src/simpleShell.c.i
+	/usr/bin/cc  $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /mnt/c/Users/user/CLionProjects/cs210-simple-group-30/src/simpleShell.c > CMakeFiles/cs210_simple_group_30.dir/src/simpleShell.c.i
 
 CMakeFiles/cs210_simple_group_30.dir/src/simpleShell.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/cs210_simple_group_30.dir/src/simpleShell.c.s"
-	/usr/bin/cc  $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /mnt/c/Users/user/git/cs210-simple-group-30/src/simpleShell.c -o CMakeFiles/cs210_simple_group_30.dir/src/simpleShell.c.s
+	/usr/bin/cc  $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /mnt/c/Users/user/CLionProjects/cs210-simple-group-30/src/simpleShell.c -o CMakeFiles/cs210_simple_group_30.dir/src/simpleShell.c.s
 
 CMakeFiles/cs210_simple_group_30.dir/src/simpleShell.c.o.requires:
 
@@ -117,7 +117,7 @@ cs210_simple_group_30: CMakeFiles/cs210_simple_group_30.dir/src/main.c.o
 cs210_simple_group_30: CMakeFiles/cs210_simple_group_30.dir/src/simpleShell.c.o
 cs210_simple_group_30: CMakeFiles/cs210_simple_group_30.dir/build.make
 cs210_simple_group_30: CMakeFiles/cs210_simple_group_30.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/mnt/c/Users/user/git/cs210-simple-group-30/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking C executable cs210_simple_group_30"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/mnt/c/Users/user/CLionProjects/cs210-simple-group-30/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking C executable cs210_simple_group_30"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/cs210_simple_group_30.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -135,6 +135,6 @@ CMakeFiles/cs210_simple_group_30.dir/clean:
 .PHONY : CMakeFiles/cs210_simple_group_30.dir/clean
 
 CMakeFiles/cs210_simple_group_30.dir/depend:
-	cd /mnt/c/Users/user/git/cs210-simple-group-30/cmake-build-debug && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /mnt/c/Users/user/git/cs210-simple-group-30 /mnt/c/Users/user/git/cs210-simple-group-30 /mnt/c/Users/user/git/cs210-simple-group-30/cmake-build-debug /mnt/c/Users/user/git/cs210-simple-group-30/cmake-build-debug /mnt/c/Users/user/git/cs210-simple-group-30/cmake-build-debug/CMakeFiles/cs210_simple_group_30.dir/DependInfo.cmake --color=$(COLOR)
+	cd /mnt/c/Users/user/CLionProjects/cs210-simple-group-30/cmake-build-debug && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /mnt/c/Users/user/CLionProjects/cs210-simple-group-30 /mnt/c/Users/user/CLionProjects/cs210-simple-group-30 /mnt/c/Users/user/CLionProjects/cs210-simple-group-30/cmake-build-debug /mnt/c/Users/user/CLionProjects/cs210-simple-group-30/cmake-build-debug /mnt/c/Users/user/CLionProjects/cs210-simple-group-30/cmake-build-debug/CMakeFiles/cs210_simple_group_30.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/cs210_simple_group_30.dir/depend
 
