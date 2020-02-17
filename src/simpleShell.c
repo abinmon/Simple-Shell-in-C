@@ -30,17 +30,13 @@ void chwDir() {
  */
 void readInput(String oldPath) {
     String buffer = malloc(sizeof(char)*ARG_MAX);
-    const char delimiters[] = " \t\n;&><|";
     char history[ARR_SIZE][ARG_MAX] = {0};
     int cmdNumber = 0;
     int Num =0 ;
     String secondArgument = calloc(strlen(buffer)+1, sizeof(char));
 
-
-
     while(1) {
         init();
-
         String c = fgets(buffer, ARG_MAX, stdin);
         strcpy(secondArgument,buffer);
 
@@ -60,16 +56,7 @@ void readInput(String oldPath) {
         fflush(stdin);
 
         if (buffer[0] != '\0') {
-
-            String* tokens;
-            tokens = getTokens(buffer, delimiters);
-            // Store History
-            if(buffer[0] != '!') {
-                storeHistory(history, &cmdNumber, buffer, tokens);
-            }
-            checkAlias(&secondArgument);
-            getTokens(secondArgument, " \t;<>|\n&");
-            checkInput(tokens, buffer, history, &cmdNumber, delimiters, &Num, secondArgument);
+            checkInput(getTokens(buffer), buffer, history, &cmdNumber, true, &Num, secondArgument);
         }
     }
 }
@@ -83,7 +70,12 @@ void readInput(String oldPath) {
  * @param cmdNumber
  * @param delimiters
  */
-void checkInput(String* tokens, const char* buffer, char history[ARR_SIZE][ARG_MAX], int *cmdNumber, const char delimiters[], int *num, String secondArgument ) {
+void checkInput(String* tokens, char* buffer, char history[ARR_SIZE][ARG_MAX], int *cmdNumber, bool storeHis, int *num, String secondArgument ) {
+    checkAlias(&secondArgument);
+    getTokens(secondArgument);
+    if(buffer[0] != '!' && (storeHis == true)) {
+        storeHistory(history, cmdNumber, buffer, tokens);
+    }
     if (strncmp(tokens[0], "getpath", 7) == 0) {
         if (tokens[1] == NULL)
         {
@@ -93,6 +85,8 @@ void checkInput(String* tokens, const char* buffer, char history[ARR_SIZE][ARG_M
             printf(ERR_ARG_MAX);
         }
     } else if (strncmp(tokens[0], "setpath", 7) == 0) {
+        // Check if there's a value for the path
+        // and check if there are no other arguments
         if (tokens[1] && (tokens[2] == NULL))
         {
             setPath(tokens[1]);
@@ -109,7 +103,7 @@ void checkInput(String* tokens, const char* buffer, char history[ARR_SIZE][ARG_M
             printf(ERR_ARG_MAX);
         } else if (tokens[1] && (checkDirectory(&tokens[0][3]) > 0)) {
             chdir(tokens[1]);
-        } else if (*tokens[1] == '\0') {
+        } else if (tokens[1] == NULL) {
             chdir(getenv("HOME"));
         } else {
             perror(tokens[1]);
@@ -121,8 +115,13 @@ void checkInput(String* tokens, const char* buffer, char history[ARR_SIZE][ARG_M
         {
             getFullHistory(history);
         }
+        else
+        {
+            printf("History command not valid!\n");
+        }
+
     } else if (buffer[0] == '!') {
-        extractHistory(tokens, history, cmdNumber, delimiters, num,secondArgument);
+        extractHistory(tokens, history, cmdNumber, num,secondArgument);
     }
     else if (strncmp(tokens[0], "alias", 5) == 0) {
 
@@ -176,18 +175,18 @@ void getPath() {
  * @param delimiters
  * @return
  */
-String* getTokens(String cmd, const char delimiters[]) {
+String* getTokens(String cmd) {
     static String tokensList[] = {NULL};
     // Copy variable in temp variable
     String tempStr = calloc(strlen(cmd)+1, sizeof(char));
     strcpy(tempStr, cmd);
     // Divide in tokens
-    String token = strtok(tempStr, delimiters);
+    String token = strtok(tempStr, DELIMITERS);
     int i = 0;
     // walk through other tokens
     while( token != NULL ) {
         tokensList[i] = token;
-        token = strtok(NULL, delimiters);
+        token = strtok(NULL, DELIMITERS);
         i++;
     }
     tokensList[i] = NULL;
@@ -217,25 +216,18 @@ void setPath(String newPath) {
  */
 void storeHistory(char history[ARR_SIZE][ARG_MAX], int *cmdNum, String cmd, String* tokens) {
     if (strcmp(tokens[0], "history") == 0) {
-        if (tokens[1]) {
-            printf("History command not valid!\n");
-
-            if (*cmdNum >= ARR_SIZE) {
-                // Shift elements to the left by one
-                // to add the new one
-                for (int i = 0; i < ARR_SIZE-1; i++) {
-                    strcpy(history[i], history[i+1]);
-                }
-                strcpy(history[ARR_SIZE-1], cmd);
-            } else {
-                strcpy(history[*cmdNum], cmd);
-            }
-            *cmdNum = *cmdNum + 1;
-
+        // Check if call is history without any rubbish arguments
+        if (*cmdNum == 0 && tokens[1] == NULL) {
+            printf(ERR_EMPTY_HIS);
             return;
         }
-        if (*cmdNum == 0) {
-            printf("History is empty!\n");
+        // Check if last command was history
+        int tempCmdNum = *cmdNum;
+        if (tempCmdNum > 20) {
+            tempCmdNum = 20;
+        }
+        --tempCmdNum;
+        if (strcmp(trimWhiteSpace(history[tempCmdNum]), "history") == 0) {
             return;
         }
     }
@@ -252,6 +244,27 @@ void storeHistory(char history[ARR_SIZE][ARG_MAX], int *cmdNum, String cmd, Stri
     *cmdNum = *cmdNum + 1;
 }
 
+char *trimWhiteSpace(char *str)
+{
+    char *tempStr = malloc(sizeof(char)*ARG_MAX);
+    strcpy(tempStr, str);
+    char *end;
+
+    // Trim leading space
+    while(isspace((unsigned char)*tempStr)) tempStr++;
+
+    if(*tempStr == 0)  // All spaces?
+        return tempStr;
+
+    // Trim trailing space
+    end = tempStr + strlen(tempStr) - 1;
+    while(end > tempStr && isspace((unsigned char)*end)) end--;
+
+    // Write new null terminator character
+    end[1] = '\0';
+
+    return tempStr;
+}
 /**
  * Print full history of commands
  *
@@ -261,24 +274,39 @@ void storeHistory(char history[ARR_SIZE][ARG_MAX], int *cmdNum, String cmd, Stri
 void getFullHistory(char history[ARR_SIZE][ARG_MAX]) {
     for(int i = 0; i < ARR_SIZE; i++) {
         if (strcmp(history[i], "") > 0) {
-            printf("\n%d. %s", i + 1, history[i]);
+            printf("%d. %s", i + 1, history[i]);
         }
     }
 
 }
 
 /**
- * Run history command selected through index
- *
- * @param history
- * @param index
- * @param delimiters
- */
-void getHistory(char history[ARR_SIZE][ARG_MAX], int index, const char delimiters[] , int *num, String secondArgument) {
+* Run history command selected through index
+*
+* @param history
+* @param index
+* @param DELIMITERS
+*/
+void getHistory(char history[ARR_SIZE][ARG_MAX], int index, String args, int *cmdNumber, int *num, String secondArgument) {
     int lessIndex = index;
-    char *cmd = history[--lessIndex];
-    checkAlias(&cmd);
-    checkInput(getTokens(cmd, delimiters), cmd, history, &index, delimiters, num, secondArgument);
+    if (lessIndex > 20) {
+        lessIndex = 20;
+    }
+    String cmd = history[--lessIndex];
+
+    if (args && strlen(args) != 0) {
+        String tempCmd = malloc(sizeof(char)*ARG_MAX);;
+        strcpy(tempCmd, cmd);
+        // Remove new line from string
+        tempCmd[strlen(tempCmd) - 1] = '\0';
+        strcat(tempCmd, " ");
+        strcat(tempCmd, args);
+        strcat(tempCmd, "\n");
+        checkInput(getTokens(tempCmd), tempCmd, history, cmdNumber, true, num, secondArgument);
+    } else {
+        checkInput(getTokens(cmd), cmd, history, &index, false, num, cmd);
+
+    }
 }
 
 /**
@@ -304,29 +332,36 @@ int isNumeric (const char * s)
  * @param cmdNumber
  * @param delimiters
  */
-void extractHistory(String* tokens, char history[ARR_SIZE][ARG_MAX], int *cmdNumber, const char delimiters[], int *num, String arg) {
-    if (tokens [1]) {
-        printf(ERR_ARG_MAX);
-        return;
-    }
+void extractHistory(String* tokens, char history[ARR_SIZE][ARG_MAX], int *cmdNumber, int *num, String argu) {
     if (strcmp(tokens[0], "!!") == 0) {
-        if (*cmdNumber > 0) {
-            getHistory(history, *cmdNumber, delimiters, num, arg);
-        } else {
-            printf("History is empty!\n");
+        if (tokens [1]) {
+            printf(ERR_ARG_MAX);
+            return;
         }
-    } else {
+        if (*cmdNumber > 0) {
+            getHistory(history, *cmdNumber, NULL, NULL, num, argu);
+        } else {
+            printf(ERR_EMPTY_HIS);
+        }
+    }else {
         String charIndex = NULL;
+        String args = malloc(sizeof(char)*ARG_MAX);
+        int i = 1;
+        // Add extra parameters if any
+        while (tokens[i] != NULL) {
+            strcat(args, tokens[i]);
+            i++;
+        }
         // Check if remainder command or normal
         // by checking if command starts with !-
         if (strncmp(tokens[0], "!-", strlen("!-")) == 0 && isNumeric(&tokens[0][2])) {
             // Take command number for remainder
             charIndex = &tokens[0][2];
-            getIndexHistory(charIndex, history, cmdNumber, delimiters, true, num, arg);
+            getIndexHistory(charIndex, history, cmdNumber, true, args, num, argu);
         } else if (isNumeric(&tokens[0][1])) {
             // Take command number
             charIndex = &tokens[0][1];
-            getIndexHistory(charIndex, history, cmdNumber, delimiters, false, num, arg);
+            getIndexHistory(charIndex, history, cmdNumber, false, args, num, argu);
         } else {
             printf("Enter a valid number! \n");
         }
@@ -342,7 +377,7 @@ void extractHistory(String* tokens, char history[ARR_SIZE][ARG_MAX], int *cmdNum
  * @param delimiters
  * @param isRemainder
  */
-void getIndexHistory(String charIndex, char history[ARR_SIZE][ARG_MAX], int *cmdNumber, const char delimiters[], bool isRemainder, int *num, String arg ) {
+void getIndexHistory(String charIndex, char history[ARR_SIZE][ARG_MAX], int *cmdNumber, bool isRemainder, String arg, int *num, String argument) {
     char *ptr;
     // Convert number from char to int
     int index = (int) strtol(charIndex, &ptr, 10);
@@ -364,7 +399,7 @@ void getIndexHistory(String charIndex, char history[ARR_SIZE][ARG_MAX], int *cmd
     } else if (index <= 0 || index > *cmdNumber) {
         printf("History command not found!\n");
     } else {
-        getHistory(history, index, delimiters, num, arg);
+        getHistory(history, index, arg, cmdNumber, num, argument);
     }
 
 }
