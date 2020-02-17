@@ -1,3 +1,0 @@
-/mnt/c/Users/user/git/cs210-simple-group-30/cmake-build-debug/CMakeFiles/edit_cache.dir
-/mnt/c/Users/user/git/cs210-simple-group-30/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/mnt/c/Users/user/git/cs210-simple-group-30/cmake-build-debug/CMakeFiles/cs210_simple_group_30.dir

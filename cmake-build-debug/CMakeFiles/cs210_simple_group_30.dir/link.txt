@@ -1,1 +1,0 @@
-/usr/bin/cc  -g   CMakeFiles/cs210_simple_group_30.dir/src/main.c.o CMakeFiles/cs210_simple_group_30.dir/src/simpleShell.c.o  -o cs210_simple_group_30 
