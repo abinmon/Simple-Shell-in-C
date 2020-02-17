@@ -33,6 +33,7 @@ void readInput(String oldPath) {
     char history[ARR_SIZE][ARG_MAX] = {0};
     int cmdNumber = 0;
     int Num =0 ;
+    previousHistory(&cmdNumber, history);
     String secondArgument = calloc(strlen(buffer)+1, sizeof(char));
 
     while(1) {
@@ -50,6 +51,9 @@ void readInput(String oldPath) {
             // Restore old Path
             setenv("PATH", oldPath, 1);
             getPath();
+            // Set working directory to home
+            chwDir();
+            writeHistory(history, &cmdNumber);
             break;
         }
 
@@ -99,17 +103,17 @@ void checkInput(String* tokens, char* buffer, char history[ARR_SIZE][ARG_MAX], i
             printf(ERR_ARG_MAX);
         }
     } else if ((strncmp(tokens[0], "cd", 2) == 0)) {
-        if (tokens[1] != NULL && tokens[2] != NULL) {
+        // Check if there are arguments
+        if (tokens[1] && tokens[2]) {
             printf(ERR_ARG_MAX);
-        } else if (tokens[1] && (checkDirectory(&tokens[0][3]) > 0)) {
-            chdir(tokens[1]);
-        } else if (tokens[1] == NULL) {
-            chdir(getenv("HOME"));
-        } else {
-            perror(tokens[1]);
         }
-        char *cwd = getcwd(NULL, 0);
-        free(cwd);
+        else if (tokens[1] == '\0') {
+            chwDir();
+        } else {
+            if (chdir(tokens[1]) < 0 ) {
+                perror(tokens[1]);
+            }
+        }
     } else if (strcmp(tokens[0], "history") == 0) {
         if (tokens[1] == NULL)
         {
@@ -403,6 +407,56 @@ void getIndexHistory(String charIndex, char history[ARR_SIZE][ARG_MAX], int *cmd
     }
 
 }
+/**
+ * Write history into file
+ *
+ * @param history
+ * @param size
+ */
+void writeHistory(char history[ARR_SIZE][ARG_MAX], const int *size) {
+    FILE *fp;
+    //file pointer to open file
+    fp = fopen(".hist_list", "w+");
+    //writing each line of history
+    for(int i = 0; i < ARR_SIZE && i < *size; i++) {
+        fprintf(fp,"%s", history[i]);
+    }
+    fclose(fp);
+}
+
+/**
+ * Load previous history from file
+ *
+ * @param cmdNum
+ * @param history
+ */
+void previousHistory(int *cmdNum, char history[ARR_SIZE][ARG_MAX]) {
+    static const char filename[] = ".hist_list";
+    FILE *fp;
+    fp = fopen ( filename, "r" );
+
+    int index = 0;
+    if ( fp != NULL )
+    {
+        char line[512];
+
+        while ( fgets ( line, sizeof line, fp ) != NULL ) /* read a line */
+        {
+            fputs ( line, stdout ); /* write the line */
+            strcpy(history[index], line);
+            index++;
+        }
+
+        *cmdNum = index;
+
+        fclose ( fp );
+    }
+    else
+    {
+        printf ( "no previous history \n");
+    }
+}
+
 
 /**
  * Check if directory exists

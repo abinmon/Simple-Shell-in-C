@@ -40,7 +40,8 @@ void getHistory(char history[ARR_SIZE][ARG_MAX], int index, String args, int *cm
 void extractHistory(String* tokens, char history[ARR_SIZE][ARG_MAX], int *cmdNumber, int *num, String arg);
 void getIndexHistory(String charIndex, char history[ARR_SIZE][ARG_MAX], int *cmdNumber, bool isRemainder, String arg, int *num, String argument);
 void checkInput(String* tokens, char* buffer, char history[ARR_SIZE][ARG_MAX], int *cmdNumber, bool storeHis, int *num, String secondArgument ) ;
-
+void previousHistory(int *cmdNum, char history[ARR_SIZE][ARG_MAX]);
+void writeHistory(char history[ARR_SIZE][ARG_MAX], const int *size);
 void unalias(String * token, int *NumberOfAliases);
 void addAlias(String *token, int* NumberOfAlias);
 void checkAlias(String *input);
