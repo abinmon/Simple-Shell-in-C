@@ -107,7 +107,7 @@ void checkInput(String* tokens, char* buffer, char history[ARR_SIZE][ARG_MAX], i
         if (tokens[1] && tokens[2]) {
             printf(ERR_ARG_MAX);
         }
-        else if (tokens[1] == '\0') {
+        else if (tokens[1] == NULL) {
             chwDir();
         } else {
             if (chdir(tokens[1]) < 0 ) {
@@ -484,17 +484,12 @@ void addAlias(String *token, int* NumberOfAlias) {
     //If there is more than one commandf
     char wholeLineCommand[512] = {'\0'};
     int t = 2;
-    while(token[t] != NULL){
-        strcat(wholeLineCommand, token[t]);
-        strcat(wholeLineCommand, " ");
-        t++;
-    }
 
     if ((token[1] == NULL)) {
         if (*NumberOfAlias == 0) {
             printf("There are no current alias\n");
         } else {
-            for (int i = 0; i <= 10; i++) {
+            for (int i = 0; i <= MAX_ALIAS; i++) {
                 if (array[i].aliasCommand[0] != '\0') {
 
                     printf("\n %s ---- %s\n", array[i].aliasName, array[i].aliasCommand);
@@ -505,10 +500,12 @@ void addAlias(String *token, int* NumberOfAlias) {
     else if(token[2] == NULL) {
         printf("Too Few Arguments");
     }
-    else if(token[4] != NULL) {
-        printf("Too many Arguments");
-    }
     else {
+        while(token[t] != NULL){
+            strcat(wholeLineCommand, token[t]);
+            strcat(wholeLineCommand, " ");
+            t++;
+        }
 
         //Null Terminating the whitespace
         int len = strlen(wholeLineCommand);
@@ -524,7 +521,7 @@ void addAlias(String *token, int* NumberOfAlias) {
                 }
                 //Finding empty position
                 if (strcmp(array[i].aliasName, "") == 0) {
-                    if(*NumberOfAlias >= 10){
+                    if(*NumberOfAlias >= MAX_ALIAS){
                         printf("Alias list full");
                         return;
                     }
@@ -547,7 +544,7 @@ void unalias(String * token, int *NumberOfAliases){
         return;
     }
     if (token[2] != NULL ){
-        printf("Too Many Arguments\n");
+        printf(ERR_ARG_MAX);
     }
     if(*NumberOfAliases <= 0){
         printf("Alias list is empty!\n");
@@ -555,7 +552,7 @@ void unalias(String * token, int *NumberOfAliases){
     }
 
 
-    for (int i = 0; i <= 10; i++) {
+    for (int i = 0; i <= MAX_ALIAS; i++) {
         if (strcmp(array[i].aliasName, token[1]) == 0) {
             strcpy(array[i].aliasName, "");
             strcpy(array[i].aliasCommand, "");
@@ -585,7 +582,7 @@ void checkAlias(String *input) {
     //get command
     token = strtok(*input, " \t;<>|\n&");
     //look for an alias and get the alias command if one is found
-    for(int j = 0; j <= 10; j++) {
+    for(int j = 0; j <= MAX_ALIAS; j++) {
         if(token != NULL && array[j].aliasName != NULL && (strcmp(token, array[j].aliasName) == 0)) {
             token = array[j].aliasCommand;
         }
