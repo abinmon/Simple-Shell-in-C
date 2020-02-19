@@ -53,6 +53,10 @@ void readInput(String oldPath) {
             // Set working directory to home
             chwDir();
             writeHistory(history, &cmdNumber);
+
+            char **tokens = getTokens(buffer);
+            saveAlias(tokens);
+
             break;
         }
 
@@ -74,8 +78,7 @@ void readInput(String oldPath) {
  * @param cmdNumber
  * @param delimiters
  */
-void checkInput(String *tokens, char *buffer, char history[ARR_SIZE][ARG_MAX], int *cmdNumber, bool storeHis,
-                int *numAliases, String copyBuffer, bool copyAlias) {
+void checkInput(String *tokens, char *buffer, char history[ARR_SIZE][ARG_MAX], int *cmdNumber, bool storeHis, int *numAliases, String copyBuffer, bool copyAlias) {
     if (buffer[0] != '!' && (storeHis == true)) {
         storeHistory(history, cmdNumber, buffer, tokens, copyBuffer, copyAlias);
     }
@@ -483,6 +486,8 @@ void addAlias(String *token, int *NumberOfAlias) {
         if (*NumberOfAlias == 0) {
             printf("There are no current alias\n");
         } else {
+            loadAlias();
+
             for (int i = 0; i <= MAX_ALIAS; i++) {
                 if (array[i].aliasCommand[0] != '\0') {
 
@@ -598,4 +603,50 @@ bool checkAlias(String *input) {
     }
     strcpy(*input, line);
     return status;
+}
+
+void saveAlias(String *input)
+{
+    FILE *fp;
+    //file pointer to open file at desktop
+    fp = fopen(".aliases", "w+");
+
+    if (fp == NULL)
+    {
+        printf("\nError cannot open file");
+    }
+    //loop for 10 as max amount of alias
+    for(int i = 0; i < 10; i++)
+    {
+        fprintf(fp,"%s  %s\n", array[i].aliasName, array[i].aliasCommand);
+        fprintf(fp,"\n");
+    }
+    fclose(fp);
+}
+
+void loadAlias()
+{
+    //moving to where file is located
+    FILE *fp;
+    fp = fopen(".aliases", "r+");
+
+    //making sure there is something to open else display message
+    if (fp != NULL)
+    {
+        int i = 0;
+        char line[ARG_MAX];
+
+        while ( fgets ( line, sizeof line, fp ) != NULL )
+        {
+            fputs(line, stdout);
+            strcpy(array[i].aliasName, line);
+            strcpy(array[i].aliasCommand, line);
+            i++;
+        }
+        fclose(fp);
+    }
+    else
+    {
+        printf("No previous aliases to load.\n");
+    }
 }
