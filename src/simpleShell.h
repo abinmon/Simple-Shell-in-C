@@ -8,6 +8,7 @@
 #include <sys/wait.h>
 #include <sys/stat.h>
 #include <errno.h>
+
 #define ARG_MAX 512
 #define ARR_SIZE 20
 #define MAX_ALIAS 10
@@ -20,29 +21,38 @@ struct alias {
     char aliasCommand[ARG_MAX];
 };
 typedef struct alias aliases;
+typedef char *String;
+typedef enum {
+    true, false
+} bool;
 
 
+aliases array[ARG_MAX];
 
-typedef char* String;
-typedef enum {true, false} bool;
+
 void init();
 void readInput(String currPath);
 int checkDirectory(String s);
 void getPath();
-String* getTokens(String cmd) ;
+String *getTokens(String cmd);
 void setPath(String newPath);
 void runCommand(String tokens[]);
-char *trimWhiteSpace(char *str);
+String trimWhiteSpace(String str);
 void chwDir();
-void storeHistory(char history[ARR_SIZE][ARG_MAX], int *cmdNum, String cmd, String* tokens);
+void storeHistory(char history[ARR_SIZE][ARG_MAX], int *cmdNum, String cmd, String *tokens, String copyBuffer,
+                  bool copyAlias);
 void getFullHistory(char history[ARR_SIZE][ARG_MAX]);
-void getHistory(char history[ARR_SIZE][ARG_MAX], int index, String args, int *cmdNumber, int *num, String secondArgument);
-void extractHistory(String* tokens, char history[ARR_SIZE][ARG_MAX], int *cmdNumber, int *num, String arg);
-void getIndexHistory(String charIndex, char history[ARR_SIZE][ARG_MAX], int *cmdNumber, bool isRemainder, String arg, int *num, String argument);
-void checkInput(String* tokens, char* buffer, char history[ARR_SIZE][ARG_MAX], int *cmdNumber, bool storeHis, int *num, String secondArgument ) ;
+void
+getHistory(char history[ARR_SIZE][ARG_MAX], int index, String args, int *cmdNumber, int *numAliases, String copyBuffer,
+           bool copyAlias);
+void extractHistory(String *tokens, char history[ARR_SIZE][ARG_MAX], int *cmdNumber, int *numAliases, String copyBuffer,
+                    bool copyAlias);
+void getIndexHistory(String charIndex, char history[ARR_SIZE][ARG_MAX], int *cmdNumber, bool isRemainder, String arg,
+                     int *numAliases, String copyBuffer, bool copyAlias);
+void checkInput(String *tokens, char *buffer, char history[ARR_SIZE][ARG_MAX], int *cmdNumber, bool storeHis,
+                int *numAliases, String copyBuffer, bool copyAlias);
 void previousHistory(int *cmdNum, char history[ARR_SIZE][ARG_MAX]);
 void writeHistory(char history[ARR_SIZE][ARG_MAX], const int *size);
-void unalias(String * token, int *NumberOfAliases);
-void addAlias(String *token, int* NumberOfAlias);
-void checkAlias(String *input);
-aliases array[ARG_MAX];
+void unAlias(String *token, int *NumberOfAliases);
+void addAlias(String *token, int *NumberOfAlias);
+bool checkAlias(String *input);
