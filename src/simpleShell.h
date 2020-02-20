@@ -39,8 +39,7 @@ void setPath(String newPath);
 void runCommand(String tokens[]);
 String trimWhiteSpace(String str);
 void chwDir();
-void storeHistory(char history[ARR_SIZE][ARG_MAX], int *cmdNum, String cmd, String *tokens, String copyBuffer,
-                  bool copyAlias);
+void storeHistory(char history[ARR_SIZE][ARG_MAX], int *cmdNum, String cmd, String *tokens);
 void getFullHistory(char history[ARR_SIZE][ARG_MAX]);
 void
 getHistory(char history[ARR_SIZE][ARG_MAX], int index, String args, int *cmdNumber, int *numAliases, String copyBuffer,

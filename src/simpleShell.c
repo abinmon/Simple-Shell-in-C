@@ -36,7 +36,7 @@ void readInput(String oldPath) {
     int cmdNumber = 0;
     int numAliases = 0;
     previousHistory(&cmdNumber, history);
-    String copyBuffer = calloc(strlen(buffer) + 1, sizeof(char));
+    String copyBuffer;
 
     while (1) {
         init();
@@ -83,7 +83,7 @@ void checkInput(String *tokens, char *buffer, char history[ARR_SIZE][ARG_MAX], i
         buffer = strdup(copyBuffer);
     }
     if (buffer[0] != '!' && (storeHis == true)) {
-        storeHistory(history, cmdNumber, buffer, tokens, copyBuffer, copyAlias);
+        storeHistory(history, cmdNumber, buffer, tokens);
     }
     // Check if need to get the alias command
     if (checkAliasCmd == true) {
@@ -213,7 +213,7 @@ void setPath(String newPath) {
  * @param cmd
  * @param tokens
  */
-void storeHistory(char history[ARR_SIZE][ARG_MAX], int *cmdNum, String cmd, String *tokens, String copyBuffer, bool copyAlias) {
+void storeHistory(char history[ARR_SIZE][ARG_MAX], int *cmdNum, String cmd, String *tokens) {
     if (strcmp(tokens[0], "history") == 0) {
         // Check if call is history without any rubbish arguments
         if (*cmdNum == 0 && tokens[1] == NULL) {
