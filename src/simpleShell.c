@@ -41,7 +41,7 @@ void readInput(String oldPath) {
     while (1) {
         init();
         String c = fgets(buffer, ARG_MAX, stdin);
-        strcpy(copyBuffer, buffer);
+        copyBuffer = strdup(buffer);
 
         // Remove leading spaces when exit is entered
         while (isspace(*buffer)) {
@@ -78,9 +78,14 @@ void readInput(String oldPath) {
  */
 void checkInput(String *tokens, char *buffer, char history[ARR_SIZE][ARG_MAX], int *cmdNumber, bool storeHis,
                 int *numAliases, String copyBuffer, bool copyAlias) {
+    // Check if need to copy the alias
+    if (copyAlias == true) {
+        buffer = strdup(copyBuffer);
+    }
     if (buffer[0] != '!' && (storeHis == true)) {
         storeHistory(history, cmdNumber, buffer, tokens, copyBuffer, copyAlias);
     }
+    // Check if need to get the alias command
     if (checkAliasCmd == true) {
         checkAlias(&buffer);
         tokens = getTokens(buffer);
@@ -121,7 +126,7 @@ void checkInput(String *tokens, char *buffer, char history[ARR_SIZE][ARG_MAX], i
 
     } else if (buffer[0] == '!') {
         extractHistory(tokens, history, cmdNumber, numAliases, copyBuffer, copyAlias);
-    } else if (strncmp(tokens[0], "alias", 5) == 0) {
+    } else if (strcmp(tokens[0], "alias") == 0) {
         addAlias(tokens, numAliases);
     } else if (strncmp(tokens[0], "unalias", 5) == 0) {
         unAlias(tokens, numAliases);
@@ -159,7 +164,7 @@ void runCommand(char *ls_args[]) {
  *
  */
 void getPath() {
-    printf("%s\n", getenv("PATH"));
+//    printf("%s\n", getenv("PATH"));
 }
 
 /**
@@ -225,9 +230,6 @@ void storeHistory(char history[ARR_SIZE][ARG_MAX], int *cmdNum, String cmd, Stri
             return;
         }
     }
-    if (copyAlias == true) {
-        strcpy(cmd, copyBuffer);
-    }
     if (*cmdNum >= ARR_SIZE) {
         // Shift elements to the left by one
         // to add the new one
@@ -292,16 +294,18 @@ void getHistory(char history[ARR_SIZE][ARG_MAX], int index, String args, int *cm
     }
     // Get command from history
     String cmd = history[--lessIndex];
-    bool storeHis;
+    bool storeHis = false;
 
     // Copy Alias internal command
     if (copyAlias == true) {
-        strcpy(cmd, copyBuffer);
+        cmd = strdup(copyBuffer);
         storeHis = true;
+        copyAlias = false;
     } else {
         // Bool check for alias in checkInput
+        copyBuffer = strdup(cmd);
         checkAliasCmd = true;
-        storeHis = true;
+        copyAlias = true;
     }
 
     if (args && strlen(args) != 0) {
@@ -313,9 +317,9 @@ void getHistory(char history[ARR_SIZE][ARG_MAX], int index, String args, int *cm
         strcat(tempCmd, args);
         strcat(tempCmd, "\n");
         storeHis = true;
-        checkInput(getTokens(tempCmd), tempCmd, history, cmdNumber, storeHis, numAliases, copyBuffer, false);
+        checkInput(getTokens(tempCmd), tempCmd, history, cmdNumber, storeHis, numAliases, copyBuffer, copyAlias);
     } else {
-        checkInput(getTokens(cmd), cmd, history, &index, storeHis, numAliases, copyBuffer, false);
+        checkInput(getTokens(cmd), cmd, history, &index, storeHis, numAliases, copyBuffer, copyAlias);
     }
 }
 
