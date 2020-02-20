@@ -1,5 +1,7 @@
 #include "simpleShell.h"
 
+bool checkAliasCmd = false;
+
 /**
  * Init function for shell terminal starting point
  *
@@ -78,6 +80,10 @@ void checkInput(String *tokens, char *buffer, char history[ARR_SIZE][ARG_MAX], i
                 int *numAliases, String copyBuffer, bool copyAlias) {
     if (buffer[0] != '!' && (storeHis == true)) {
         storeHistory(history, cmdNumber, buffer, tokens, copyBuffer, copyAlias);
+    }
+    if (checkAliasCmd == true) {
+        checkAlias(&buffer);
+        tokens = getTokens(buffer);
     }
     if (strncmp(tokens[0], "getpath", 7) == 0) {
         if (tokens[1] == NULL) {
@@ -284,12 +290,17 @@ void getHistory(char history[ARR_SIZE][ARG_MAX], int index, String args, int *cm
     if (lessIndex > 20) {
         lessIndex = 20;
     }
+    // Get command from history
     String cmd = history[--lessIndex];
-    bool storeHis = true;
+    bool storeHis;
 
     // Copy Alias internal command
     if (copyAlias == true) {
         strcpy(cmd, copyBuffer);
+        storeHis = true;
+    } else {
+        // Bool check for alias in checkInput
+        checkAliasCmd = true;
         storeHis = true;
     }
 
