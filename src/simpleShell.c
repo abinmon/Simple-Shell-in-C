@@ -492,7 +492,7 @@ void addAlias(String *token, int *NumberOfAlias) {
             {
                 if (array[i].aliasName[0] != '\0')
                 {
-                    printf(array[i].aliasName);
+                    printf(array[i].aliasName, array[i].aliasCommand);
                 }
             }
         }
@@ -611,7 +611,7 @@ void saveAlias(String *input, const int *numAliases)
 {
     FILE *fp;
     //file pointer to open file at desktop
-    fp = fopen(".aliases11", "w+");
+    fp = fopen(".aliases13", "w+");
 
     if (fp == NULL)
     {
@@ -632,16 +632,18 @@ void loadAlias(int *NumberOfAliases)
 {
     //moving to where file is located
     FILE *fp;
-    fp = fopen(".aliases11", "r+");
+    fp = fopen(".aliases13", "r+");
 
     //making sure there is something to open else display message
     if (fp != NULL)
     {
         int i = 0;
+        int j = 0;
         char line[ARG_MAX];
 
         while ( fgets ( line, sizeof line, fp ) != NULL )
         {
+
             fputs(line, stdout);
             strcpy(array[i].aliasName, line);
             //strcpy(array[i].aliasCommand, line);
