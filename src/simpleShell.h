@@ -56,5 +56,5 @@ void writeHistory(char history[ARR_SIZE][ARG_MAX], const int *size);
 void unAlias(String *token, int *NumberOfAliases);
 void addAlias(String *token, int *NumberOfAlias);
 bool checkAlias(String *input);
-void saveAlias(String *input);
-void loadAlias();
+void saveAlias(String *input, const int *numAliases);
+void loadAlias(int *NumberOfAliases);
