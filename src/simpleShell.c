@@ -419,7 +419,7 @@ void getIndexHistory(String charIndex, char history[ARR_SIZE][ARG_MAX], int *cmd
 void writeHistory(char history[ARR_SIZE][ARG_MAX], const int *size) {
     FILE *fp;
     //file pointer to open file
-    fp = fopen(".hist_list", "w+");
+    fp = fopen(".hist_list1", "w+");
     //writing each line of history
     for (int i = 0; i < ARR_SIZE && i < *size; i++) {
         fprintf(fp, "%s", history[i]);
@@ -434,7 +434,7 @@ void writeHistory(char history[ARR_SIZE][ARG_MAX], const int *size) {
  * @param history
  */
 void previousHistory(int *cmdNum, char history[ARR_SIZE][ARG_MAX]) {
-    static const char filename[] = ".hist_list";
+    static const char filename[] = ".hist_list1";
     FILE *fp;
     fp = fopen(filename, "r");
 
@@ -490,9 +490,9 @@ void addAlias(String *token, int *NumberOfAlias) {
         } else {
             for (int i = 0; i <= MAX_ALIAS; i++)
             {
-                if (array[i].aliasName[0] != '\0')
+                if (array[i].aliasCommand[0] != '\0')
                 {
-                    printf(array[i].aliasName, array[i].aliasCommand);
+                    printf("%s\n",array[i].aliasName, array[i].aliasCommand);
                 }
             }
         }
@@ -611,7 +611,7 @@ void saveAlias(String *input, const int *numAliases)
 {
     FILE *fp;
     //file pointer to open file at desktop
-    fp = fopen(".aliases13", "w+");
+    fp = fopen(".aliases16", "w+");
 
     if (fp == NULL)
     {
@@ -632,7 +632,7 @@ void loadAlias(int *NumberOfAliases)
 {
     //moving to where file is located
     FILE *fp;
-    fp = fopen(".aliases13", "r+");
+    fp = fopen(".aliases16", "r+");
 
     //making sure there is something to open else display message
     if (fp != NULL)
@@ -643,12 +643,26 @@ void loadAlias(int *NumberOfAliases)
 
         while ( fgets ( line, sizeof line, fp ) != NULL )
         {
+            char aliasName[ARG_MAX];
+            char command[ARG_MAX];
 
-            fputs(line, stdout);
-            strcpy(array[i].aliasName, line);
+            int result;
+            result = sscanf(line, "%s %[^\n]", aliasName, command);
+
+            if (result < 2)
+            {
+                i++;
+            }
+            else
+            {
+                fputs(line, stdout);
+                strcpy(array[i].aliasName, aliasName);
+                strcpy(array[i].aliasCommand, command);
+                i++;
+            }
+
             //strcpy(array[i].aliasCommand, line);
             //printf(0);
-            i++;
         }
         fclose(fp);
         *NumberOfAliases = i;
