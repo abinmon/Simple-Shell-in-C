@@ -164,7 +164,7 @@ void runCommand(char *ls_args[]) {
  *
  */
 void getPath() {
-//    printf("%s\n", getenv("PATH"));
+    printf("%s\n", getenv("PATH"));
 }
 
 /**
