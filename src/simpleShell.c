@@ -267,15 +267,15 @@ String trimWhiteSpace(String str) {
  * @param history
  * @param size
  */
-void getFullHistory(char history[ARR_SIZE][ARG_MAX]) {
+void getFullHistory(char history[ARR_SIZE][ARG_MAX])
+{
+    printf("This is the current history\n");
     for (int i = 0; i < ARR_SIZE; i++) {
         if (strcmp(history[i], "") > 0) {
             printf("%d. %s", i + 1, history[i]);
-        }
+       }
     }
-
 }
-
 /**
 * Run history command selected through index
 *
@@ -419,7 +419,7 @@ void getIndexHistory(String charIndex, char history[ARR_SIZE][ARG_MAX], int *cmd
 void writeHistory(char history[ARR_SIZE][ARG_MAX], const int *size) {
     FILE *fp;
     //file pointer to open file
-    fp = fopen(".hist_list1", "w+");
+    fp = fopen(".hist_list3", "w+");
     //writing each line of history
     for (int i = 0; i < ARR_SIZE && i < *size; i++) {
         fprintf(fp, "%s", history[i]);
@@ -434,7 +434,7 @@ void writeHistory(char history[ARR_SIZE][ARG_MAX], const int *size) {
  * @param history
  */
 void previousHistory(int *cmdNum, char history[ARR_SIZE][ARG_MAX]) {
-    static const char filename[] = ".hist_list1";
+    static const char filename[] = ".hist_list3";
     FILE *fp;
     fp = fopen(filename, "r");
 
@@ -488,11 +488,12 @@ void addAlias(String *token, int *NumberOfAlias) {
         if (*NumberOfAlias == 0) {
             printf("There are no current alias\n");
         } else {
+            printf("Current Aliases:\n");
             for (int i = 0; i <= MAX_ALIAS; i++)
             {
                 if (array[i].aliasCommand[0] != '\0')
                 {
-                    printf("%s\n",array[i].aliasName, array[i].aliasCommand);
+                    printf("%s %s\n",array[i].aliasName, array[i].aliasCommand);
                 }
             }
         }
@@ -611,7 +612,7 @@ void saveAlias(String *input, const int *numAliases)
 {
     FILE *fp;
     //file pointer to open file at desktop
-    fp = fopen(".aliases16", "w+");
+    fp = fopen(".aliases18", "w+");
 
     if (fp == NULL)
     {
@@ -632,7 +633,7 @@ void loadAlias(int *NumberOfAliases)
 {
     //moving to where file is located
     FILE *fp;
-    fp = fopen(".aliases16", "r+");
+    fp = fopen(".aliases18", "r+");
 
     //making sure there is something to open else display message
     if (fp != NULL)
