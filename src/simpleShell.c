@@ -250,9 +250,14 @@ void storeHistory(char history[ARR_SIZE][ARG_MAX], int *cmdNum, String cmd, Stri
         for (int i = 0; i < ARR_SIZE - 1; i++) {
             strcpy(history[i], history[i + 1]);
         }
-        if (strcmp(cmd, "alias") == 0)
+
+        if (strcmp(tokens[0], "alias") == 0 && tokens[1] == NULL)
         {
             strcat(cmd, "\n");
+        }
+        else if (strcmp(tokens[0], "alias") == 0 && tokens[1] != NULL)
+        {
+            strcat(cmd, "\0");
         }
         else if ((strcmp(tokens[0], "cd") == 0) && tokens[1] != NULL)
         {
@@ -260,15 +265,25 @@ void storeHistory(char history[ARR_SIZE][ARG_MAX], int *cmdNum, String cmd, Stri
             cmd[sizeOfCmd] = '\0';
         }
         else if ((strcmp(tokens[0], "ls") == 0) && tokens[1] != NULL)
+        {
+            size_t sizeOfCmd = strlen(cmd) - 1;
+            cmd[sizeOfCmd] = '\0';
+        }
+        else if (tokens[0] != NULL && tokens[1] != NULL)
         {
             size_t sizeOfCmd = strlen(cmd) - 1;
             cmd[sizeOfCmd] = '\0';
         }
         strcpy(history[ARR_SIZE - 1], cmd);
-    } else {
-        if (strcmp(cmd, "alias") == 0)
+    }
+    else {
+        if (strcmp(tokens[0], "alias") == 0 && tokens[1] == NULL)
         {
             strcat(cmd, "\n");
+        }
+        else if (strcmp(tokens[0], "alias") == 0 && tokens[1] != NULL)
+        {
+            strcat(cmd, "\0");
         }
         else if ((strcmp(tokens[0], "cd") == 0) && tokens[1] != NULL)
         {
@@ -276,6 +291,11 @@ void storeHistory(char history[ARR_SIZE][ARG_MAX], int *cmdNum, String cmd, Stri
             cmd[sizeOfCmd] = '\0';
         }
         else if ((strcmp(tokens[0], "ls") == 0) && tokens[1] != NULL)
+        {
+            size_t sizeOfCmd = strlen(cmd) - 1;
+            cmd[sizeOfCmd] = '\0';
+        }
+        else if (tokens[0] != NULL && tokens[1] != NULL)
         {
             size_t sizeOfCmd = strlen(cmd) - 1;
             cmd[sizeOfCmd] = '\0';
