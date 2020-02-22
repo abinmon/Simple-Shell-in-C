@@ -254,11 +254,31 @@ void storeHistory(char history[ARR_SIZE][ARG_MAX], int *cmdNum, String cmd, Stri
         {
             strcat(cmd, "\n");
         }
+        else if ((strcmp(tokens[0], "cd") == 0) && tokens[1] != NULL)
+        {
+            size_t sizeOfCmd = strlen(cmd) - 1;
+            cmd[sizeOfCmd] = '\0';
+        }
+        else if ((strcmp(tokens[0], "ls") == 0) && tokens[1] != NULL)
+        {
+            size_t sizeOfCmd = strlen(cmd) - 1;
+            cmd[sizeOfCmd] = '\0';
+        }
         strcpy(history[ARR_SIZE - 1], cmd);
     } else {
         if (strcmp(cmd, "alias") == 0)
         {
             strcat(cmd, "\n");
+        }
+        else if ((strcmp(tokens[0], "cd") == 0) && tokens[1] != NULL)
+        {
+            size_t sizeOfCmd = strlen(cmd) - 1;
+            cmd[sizeOfCmd] = '\0';
+        }
+        else if ((strcmp(tokens[0], "ls") == 0) && tokens[1] != NULL)
+        {
+            size_t sizeOfCmd = strlen(cmd) - 1;
+            cmd[sizeOfCmd] = '\0';
         }
         strcpy(history[*cmdNum], cmd);
     }
