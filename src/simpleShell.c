@@ -250,8 +250,16 @@ void storeHistory(char history[ARR_SIZE][ARG_MAX], int *cmdNum, String cmd, Stri
         for (int i = 0; i < ARR_SIZE - 1; i++) {
             strcpy(history[i], history[i + 1]);
         }
+        if (strcmp(cmd, "alias") == 0)
+        {
+            strcat(cmd, "\n");
+        }
         strcpy(history[ARR_SIZE - 1], cmd);
     } else {
+        if (strcmp(cmd, "alias") == 0)
+        {
+            strcat(cmd, "\n");
+        }
         strcpy(history[*cmdNum], cmd);
     }
     *cmdNum = *cmdNum + 1;
@@ -637,7 +645,7 @@ void saveAlias(String *input, const int *numAliases)
 {
     FILE *fp;
     //file pointer to open file at desktop
-    fp = fopen(".aliases18", "w+");
+    fp = fopen(".aliases", "w+");
 
     if (fp == NULL)
     {
@@ -658,7 +666,7 @@ void loadAlias(int *NumberOfAliases)
 {
     //moving to where file is located
     FILE *fp;
-    fp = fopen(".aliases18", "r+");
+    fp = fopen(".aliases", "r+");
 
     //making sure there is something to open else display message
     if (fp != NULL)
