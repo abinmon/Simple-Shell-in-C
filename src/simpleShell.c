@@ -35,8 +35,14 @@ void readInput(String oldPath) {
     char history[ARR_SIZE][ARG_MAX] = {0};
     int cmdNumber = 0;
     int numAliases = 0;
+
+    printf("\nThe previous history\n");
     previousHistory(&cmdNumber, history);
+
+    printf("\nThe previous aliases\n");
     loadAlias(&numAliases);
+    printf("\n");
+
     String copyBuffer = calloc(strlen(buffer) + 1, sizeof(char));
 
     while (1) {
@@ -237,6 +243,7 @@ void storeHistory(char history[ARR_SIZE][ARG_MAX], int *cmdNum, String cmd, Stri
     if (copyAlias == true) {
         strcpy(cmd, copyBuffer);
     }
+
     if (*cmdNum >= ARR_SIZE) {
         // Shift elements to the left by one
         // to add the new one
