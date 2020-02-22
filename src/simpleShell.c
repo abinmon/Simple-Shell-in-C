@@ -1,5 +1,7 @@
 #include "simpleShell.h"
 
+bool checkAliasCmd = false;
+
 /**
  * Init function for shell terminal starting point
  *
@@ -35,13 +37,12 @@ void readInput(String oldPath) {
     int numAliases = 0;
     previousHistory(&cmdNumber, history);
     loadAlias(&numAliases);
-
     String copyBuffer = calloc(strlen(buffer) + 1, sizeof(char));
 
     while (1) {
         init();
         String c = fgets(buffer, ARG_MAX, stdin);
-        strcpy(copyBuffer, buffer);
+        copyBuffer = strdup(buffer);
 
         // Remove leading spaces when exit is entered
         while (isspace(*buffer)) {
@@ -81,8 +82,17 @@ void readInput(String oldPath) {
  * @param delimiters
  */
 void checkInput(String *tokens, char *buffer, char history[ARR_SIZE][ARG_MAX], int *cmdNumber, bool storeHis, int *numAliases, String copyBuffer, bool copyAlias) {
+    // Check if need to copy the alias
+    if (copyAlias == true) {
+        buffer = strdup(copyBuffer);
+    }
     if (buffer[0] != '!' && (storeHis == true)) {
         storeHistory(history, cmdNumber, buffer, tokens, copyBuffer, copyAlias);
+    }
+    // Check if need to get the alias command
+    if (checkAliasCmd == true) {
+        checkAlias(&buffer);
+        tokens = getTokens(buffer);
     }
     if (strncmp(tokens[0], "getpath", 7) == 0) {
         if (tokens[1] == NULL) {
@@ -275,7 +285,9 @@ void getFullHistory(char history[ARR_SIZE][ARG_MAX])
             printf("%d. %s", i + 1, history[i]);
        }
     }
+
 }
+
 /**
 * Run history command selected through index
 *
@@ -289,13 +301,20 @@ void getHistory(char history[ARR_SIZE][ARG_MAX], int index, String args, int *cm
     if (lessIndex > 20) {
         lessIndex = 20;
     }
+    // Get command from history
     String cmd = history[--lessIndex];
-    bool storeHis = true;
+    bool storeHis = false;
 
     // Copy Alias internal command
     if (copyAlias == true) {
-        strcpy(cmd, copyBuffer);
+        cmd = strdup(copyBuffer);
         storeHis = true;
+        copyAlias = false;
+    } else {
+        // Bool check for alias in checkInput
+        copyBuffer = strdup(cmd);
+        checkAliasCmd = true;
+        copyAlias = true;
     }
 
     if (args && strlen(args) != 0) {
@@ -419,7 +438,7 @@ void getIndexHistory(String charIndex, char history[ARR_SIZE][ARG_MAX], int *cmd
 void writeHistory(char history[ARR_SIZE][ARG_MAX], const int *size) {
     FILE *fp;
     //file pointer to open file
-    fp = fopen(".hist_list3", "w+");
+    fp = fopen(".hist_list", "w+");
     //writing each line of history
     for (int i = 0; i < ARR_SIZE && i < *size; i++) {
         fprintf(fp, "%s", history[i]);
@@ -434,7 +453,7 @@ void writeHistory(char history[ARR_SIZE][ARG_MAX], const int *size) {
  * @param history
  */
 void previousHistory(int *cmdNum, char history[ARR_SIZE][ARG_MAX]) {
-    static const char filename[] = ".hist_list3";
+    static const char filename[] = ".hist_list";
     FILE *fp;
     fp = fopen(filename, "r");
 
@@ -533,7 +552,6 @@ void addAlias(String *token, int *NumberOfAlias) {
         }
 
     }
-
 
 }
 
