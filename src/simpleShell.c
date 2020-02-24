@@ -130,7 +130,7 @@ void checkInput(String *tokens, char *buffer, char history[ARR_SIZE][ARG_MAX], i
 
     } else if (buffer[0] == '!') {
         extractHistory(tokens, history, cmdNumber, numAliases, copyBuffer, copyAlias);
-    } else if (strcmp(tokens[0], "alias") == 0) {
+    } else if (strncmp(tokens[0], "alias", 5) == 0) {
         addAlias(tokens, numAliases);
     } else if (strncmp(tokens[0], "unalias", 5) == 0) {
         unAlias(tokens, numAliases);
@@ -191,6 +191,7 @@ String *getTokens(String cmd) {
         tokensList[i] = token;
         token = strtok(NULL, DELIMITERS);
         i++;
+        numArgs = i;
     }
     numArgs = i;
     tokensList[i] = NULL;
@@ -275,11 +276,13 @@ String trimWhiteSpace(String str) {
  * @param history
  * @param size
  */
-void getFullHistory(char history[ARR_SIZE][ARG_MAX]) {
+void getFullHistory(char history[ARR_SIZE][ARG_MAX])
+{
+    printf("This is the current history\n");
     for (int i = 0; i < ARR_SIZE; i++) {
         if (strcmp(history[i], "") > 0) {
             printf("%d. %s", i + 1, history[i]);
-        }
+       }
     }
 
 }
@@ -503,10 +506,12 @@ void addAlias(String *token, int *NumberOfAlias) {
         if (*NumberOfAlias == 0) {
             printf("There are no current alias\n");
         } else {
-            for (int i = 0; i <= MAX_ALIAS; i++) {
-                if (array[i].aliasCommand[0] != '\0') {
-
-                    printf("\n %s ---- %s\n", array[i].aliasName, array[i].aliasCommand);
+            printf("Current Aliases:\n");
+            for (int i = 0; i <= MAX_ALIAS; i++)
+            {
+                if (array[i].aliasCommand[0] != '\0')
+                {
+                    printf("%s %s\n",array[i].aliasName, array[i].aliasCommand);
                 }
             }
         }
