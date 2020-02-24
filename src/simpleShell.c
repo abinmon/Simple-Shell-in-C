@@ -62,9 +62,9 @@ void readInput(String oldPath) {
         fflush(stdin);
 
         if (buffer[0] != '\0') {
-            String *tokens = getTokens(buffer);
+            getTokens(buffer);
             bool copyAlias = checkAlias(&buffer);
-            checkInput(tokens, buffer, history, &cmdNumber, true, &numAliases, copyBuffer, copyAlias);
+            checkInput(getTokens(buffer), buffer, history, &cmdNumber, true, &numAliases, copyBuffer, copyAlias);
         }
     }
 }
