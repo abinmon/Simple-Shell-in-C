@@ -62,6 +62,8 @@ void readInput(String oldPath) {
         fflush(stdin);
 
         if (buffer[0] != '\0') {
+            // Check tokens before checking alias
+            // for getting num arguments
             getTokens(buffer);
             bool copyAlias = checkAlias(&buffer);
             checkInput(getTokens(buffer), buffer, history, &cmdNumber, true, &numAliases, copyBuffer, copyAlias);
