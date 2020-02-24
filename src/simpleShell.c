@@ -529,7 +529,7 @@ void addAlias(String *token, int *NumberOfAlias) {
         wholeLineCommand[len - 1] = '\0';
 
         //Look for duplicate aliases
-        for (int i = 0; i <= 11; i++) {
+        for (int i = 1; i <= 11; i++) {
             if (strcmp(array[i].aliasName, token[1]) == 0) {
                 printf("Overwriting alias %s\n", token[1]);
                 strcpy(array[i].aliasName, token[1]);
@@ -562,6 +562,7 @@ void unAlias(String *token, int *NumberOfAliases) {
     }
     if (token[2] != NULL) {
         printf(ERR_ARG_MAX);
+        return;
     }
     if (*NumberOfAliases <= 0) {
         printf("Alias list is empty!\n");
