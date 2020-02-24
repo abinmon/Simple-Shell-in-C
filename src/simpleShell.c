@@ -1,6 +1,7 @@
 #include "simpleShell.h"
 
 bool checkAliasCmd = false;
+int numArgs = 0;
 
 /**
  * Init function for shell terminal starting point
@@ -61,8 +62,9 @@ void readInput(String oldPath) {
         fflush(stdin);
 
         if (buffer[0] != '\0') {
+            String *tokens = getTokens(buffer);
             bool copyAlias = checkAlias(&buffer);
-            checkInput(getTokens(buffer), buffer, history, &cmdNumber, true, &numAliases, copyBuffer, copyAlias);
+            checkInput(tokens, buffer, history, &cmdNumber, true, &numAliases, copyBuffer, copyAlias);
         }
     }
 }
@@ -188,6 +190,7 @@ String *getTokens(String cmd) {
         token = strtok(NULL, DELIMITERS);
         i++;
     }
+    numArgs = i;
     tokensList[i] = NULL;
     return tokensList;
 }
@@ -607,8 +610,8 @@ bool checkAlias(String *input) {
         strcat(line, token);
     }
     // Add new line at the end of the string
-    // if the command is alias then don't
-    if (strstr(line, "alias ") == NULL) {
+    // if the number of arguments is greater than 1
+    if (numArgs < 2) {
         strcat(line, "\n");
     }
     strcpy(*input, line);
