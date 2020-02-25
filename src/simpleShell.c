@@ -1,6 +1,7 @@
 #include "simpleShell.h"
 
 bool checkAliasCmd = false;
+int numArgs = 0;
 
 /**
  * Init function for shell terminal starting point
@@ -43,7 +44,7 @@ void readInput(String oldPath) {
     loadAlias(&numAliases);
     printf("\n");
 
-    String copyBuffer = calloc(strlen(buffer) + 1, sizeof(char));
+    String copyBuffer;
 
     while (1) {
         init();
@@ -72,6 +73,9 @@ void readInput(String oldPath) {
         fflush(stdin);
 
         if (buffer[0] != '\0') {
+            // Check tokens before checking alias
+            // for getting num arguments
+            getTokens(buffer);
             bool copyAlias = checkAlias(&buffer);
             checkInput(getTokens(buffer), buffer, history, &cmdNumber, true, &numAliases, copyBuffer, copyAlias);
         }
@@ -87,13 +91,14 @@ void readInput(String oldPath) {
  * @param cmdNumber
  * @param delimiters
  */
-void checkInput(String *tokens, char *buffer, char history[ARR_SIZE][ARG_MAX], int *cmdNumber, bool storeHis, int *numAliases, String copyBuffer, bool copyAlias) {
+void checkInput(String *tokens, char *buffer, char history[ARR_SIZE][ARG_MAX], int *cmdNumber, bool storeHis,
+                int *numAliases, String copyBuffer, bool copyAlias) {
     // Check if need to copy the alias
     if (copyAlias == true) {
         buffer = strdup(copyBuffer);
     }
     if (buffer[0] != '!' && (storeHis == true)) {
-        storeHistory(history, cmdNumber, buffer, tokens, copyBuffer, copyAlias);
+        storeHistory(history, cmdNumber, buffer, tokens);
     }
     // Check if need to get the alias command
     if (checkAliasCmd == true) {
@@ -138,7 +143,7 @@ void checkInput(String *tokens, char *buffer, char history[ARR_SIZE][ARG_MAX], i
         extractHistory(tokens, history, cmdNumber, numAliases, copyBuffer, copyAlias);
     } else if (strncmp(tokens[0], "alias", 5) == 0) {
         addAlias(tokens, numAliases);
-    } else if (strncmp(tokens[0], "unalias", 5) == 0) {
+    } else if (strncmp(tokens[0], "unalias", 7) == 0) {
         unAlias(tokens, numAliases);
     } else {
         runCommand(tokens);
@@ -197,7 +202,9 @@ String *getTokens(String cmd) {
         tokensList[i] = token;
         token = strtok(NULL, DELIMITERS);
         i++;
+        numArgs = i;
     }
+    numArgs = i;
     tokensList[i] = NULL;
     return tokensList;
 }
@@ -223,7 +230,7 @@ void setPath(String newPath) {
  * @param cmd
  * @param tokens
  */
-void storeHistory(char history[ARR_SIZE][ARG_MAX], int *cmdNum, String cmd, String *tokens, String copyBuffer, bool copyAlias) {
+void storeHistory(char history[ARR_SIZE][ARG_MAX], int *cmdNum, String cmd, String *tokens) {
     if (strcmp(tokens[0], "history") == 0) {
         // Check if call is history without any rubbish arguments
         if (*cmdNum == 0 && tokens[1] == NULL) {
@@ -240,66 +247,14 @@ void storeHistory(char history[ARR_SIZE][ARG_MAX], int *cmdNum, String cmd, Stri
             return;
         }
     }
-    if (copyAlias == true) {
-        strcpy(cmd, copyBuffer);
-    }
-
     if (*cmdNum >= ARR_SIZE) {
         // Shift elements to the left by one
         // to add the new one
         for (int i = 0; i < ARR_SIZE - 1; i++) {
             strcpy(history[i], history[i + 1]);
         }
-
-        if (strcmp(tokens[0], "alias") == 0 && tokens[1] == NULL)
-        {
-            strcat(cmd, "\n");
-        }
-        else if (strcmp(tokens[0], "alias") == 0 && tokens[1] != NULL)
-        {
-            strcat(cmd, "\0");
-        }
-        else if ((strcmp(tokens[0], "cd") == 0) && tokens[1] != NULL)
-        {
-            size_t sizeOfCmd = strlen(cmd) - 1;
-            cmd[sizeOfCmd] = '\0';
-        }
-        else if ((strcmp(tokens[0], "ls") == 0) && tokens[1] != NULL)
-        {
-            size_t sizeOfCmd = strlen(cmd) - 1;
-            cmd[sizeOfCmd] = '\0';
-        }
-        else if (tokens[0] != NULL && tokens[1] != NULL)
-        {
-            size_t sizeOfCmd = strlen(cmd) - 1;
-            cmd[sizeOfCmd] = '\0';
-        }
         strcpy(history[ARR_SIZE - 1], cmd);
-    }
-    else {
-        if (strcmp(tokens[0], "alias") == 0 && tokens[1] == NULL)
-        {
-            strcat(cmd, "\n");
-        }
-        else if (strcmp(tokens[0], "alias") == 0 && tokens[1] != NULL)
-        {
-            strcat(cmd, "\0");
-        }
-        else if ((strcmp(tokens[0], "cd") == 0) && tokens[1] != NULL)
-        {
-            size_t sizeOfCmd = strlen(cmd) - 1;
-            cmd[sizeOfCmd] = '\0';
-        }
-        else if ((strcmp(tokens[0], "ls") == 0) && tokens[1] != NULL)
-        {
-            size_t sizeOfCmd = strlen(cmd) - 1;
-            cmd[sizeOfCmd] = '\0';
-        }
-        else if (tokens[0] != NULL && tokens[1] != NULL)
-        {
-            size_t sizeOfCmd = strlen(cmd) - 1;
-            cmd[sizeOfCmd] = '\0';
-        }
+    } else {
         strcpy(history[*cmdNum], cmd);
     }
     *cmdNum = *cmdNum + 1;
@@ -381,9 +336,9 @@ void getHistory(char history[ARR_SIZE][ARG_MAX], int index, String args, int *cm
         strcat(tempCmd, args);
         strcat(tempCmd, "\n");
         storeHis = true;
-        checkInput(getTokens(tempCmd), tempCmd, history, cmdNumber, storeHis, numAliases, copyBuffer, false);
+        checkInput(getTokens(tempCmd), tempCmd, history, cmdNumber, storeHis, numAliases, copyBuffer, copyAlias);
     } else {
-        checkInput(getTokens(cmd), cmd, history, &index, storeHis, numAliases, copyBuffer, false);
+        checkInput(getTokens(cmd), cmd, history, &index, storeHis, numAliases, copyBuffer, copyAlias);
     }
 }
 
@@ -585,7 +540,7 @@ void addAlias(String *token, int *NumberOfAlias) {
         wholeLineCommand[len - 1] = '\0';
 
         //Look for duplicate aliases
-        for (int i = 0; i <= 11; i++) {
+        for (int i = 1; i <= 11; i++) {
             if (strcmp(array[i].aliasName, token[1]) == 0) {
                 printf("Overwriting alias %s\n", token[1]);
                 strcpy(array[i].aliasName, token[1]);
@@ -618,6 +573,7 @@ void unAlias(String *token, int *NumberOfAliases) {
     }
     if (token[2] != NULL) {
         printf(ERR_ARG_MAX);
+        return;
     }
     if (*NumberOfAliases <= 0) {
         printf("Alias list is empty!\n");
@@ -673,8 +629,8 @@ bool checkAlias(String *input) {
         strcat(line, token);
     }
     // Add new line at the end of the string
-    // if the command is alias then don't
-    if (strstr(line, "alias") == NULL) {
+    // if the number of arguments is greater than 1
+    if (numArgs < 2) {
         strcat(line, "\n");
     }
     strcpy(*input, line);
