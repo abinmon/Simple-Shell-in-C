@@ -132,7 +132,7 @@ void checkInput(String *tokens, char *buffer, char history[ARR_SIZE][ARG_MAX], i
         extractHistory(tokens, history, cmdNumber, numAliases, copyBuffer, copyAlias);
     } else if (strncmp(tokens[0], "alias", 5) == 0) {
         addAlias(tokens, numAliases);
-    } else if (strncmp(tokens[0], "unalias", 5) == 0) {
+    } else if (strncmp(tokens[0], "unalias", 7) == 0) {
         unAlias(tokens, numAliases);
     } else {
         runCommand(tokens);
