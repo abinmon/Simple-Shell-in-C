@@ -659,7 +659,6 @@ void loadAlias(int *numberOfAliases)
     fp = fopen(filename, "r");
 
     int index = 1;
-    int indexForCommand = 1;
 
     if (fp != NULL) {
         char line[ARG_MAX];
@@ -671,18 +670,17 @@ void loadAlias(int *numberOfAliases)
             fputs(line, stdout); /* write the line */
 
             char **tokensList = getTokens(line);
+            int indexForCommand = 1;
 
             strcpy(array[index].aliasName, tokensList[0]);
 
             // Used for storing parameters
-
             while(tokensList[indexForCommand] != NULL)
             {
                 strcat(commandForAlias, tokensList[indexForCommand]);
-                strcat(commandForAlias, "");
+                strcat(commandForAlias, " ");
                 indexForCommand++;
             }
-
             strcpy(array[index].aliasCommand, commandForAlias);
 
             index++;
