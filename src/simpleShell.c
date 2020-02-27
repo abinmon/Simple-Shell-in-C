@@ -637,6 +637,11 @@ bool checkAlias(String *input) {
         strcat(line, "\n");
     }
     strcpy(*input, line);
+
+    if (strstr(*input, "!") != NULL) {
+        status = false;
+    }
+
     return status;
 }
 
