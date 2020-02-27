@@ -515,7 +515,6 @@ void addAlias(String *token, int *NumberOfAlias) {
     //If there is more than one command
     char wholeLineCommand[512] = {'\0'};
     int t = 2;
-
     if (token[1] == NULL) {
         if (*NumberOfAlias == 0) {
             printf("There are no current alias\n");
@@ -556,16 +555,24 @@ void addAlias(String *token, int *NumberOfAlias) {
                     printf("Alias list full\n");
                     return;
                 }
-                strcpy(array[i].aliasName, token[1]);
-                strcpy(array[i].aliasCommand, wholeLineCommand);
-                *NumberOfAlias = *NumberOfAlias + 1;
-                printf("New Alias %s -- %s\n", token[1], wholeLineCommand);
-                return;
+                for (a = 1 ; a <= 11; a++) {
+                    if ((strcmp(array[a].aliasName, token[2]) == 0) && (*NumberOfAlias > 0)) {
+                        for (int d = 1; d <=11; d++) {
+                            if ((strcmp(array[d].aliasCommand, token[1]) == 0)) {
+                            printf("Circular Alias");
+                            return;
+                            }
+                        }
+                    }
+                }
+                    strcpy(array[i].aliasName, token[1]);
+                    strcpy(array[i].aliasCommand, wholeLineCommand);
+                    *NumberOfAlias = *NumberOfAlias + 1;
+                    printf("New Alias %s -- %s\n", token[1], wholeLineCommand);
+                    return;
             }
         }
-
     }
-
 }
 
 void unAlias(String *token, int *NumberOfAliases) {
