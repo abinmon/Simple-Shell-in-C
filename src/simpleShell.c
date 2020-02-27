@@ -543,6 +543,16 @@ void addAlias(String *token, int *NumberOfAlias) {
         //Look for duplicate aliases
         for (int i = 1; i <= 11; i++) {
             if (strcmp(array[i].aliasName, token[1]) == 0) {
+                for (int a = 1 ; a <= 11; a++) {
+                    if ((strcmp(array[a].aliasName, token[2]) == 0) && (*NumberOfAlias > 0)) {
+                        for (int d = 1; d <=11; d++) {
+                            if ((strcmp(array[d].aliasCommand, token[1]) == 0)) {
+                                printf("Circular Alias \n");
+                                return;
+                            }
+                        }
+                    }
+                }
                 printf("Overwriting alias %s\n", token[1]);
                 strcpy(array[i].aliasName, token[1]);
                 strcpy(array[i].aliasCommand, wholeLineCommand);
@@ -554,12 +564,12 @@ void addAlias(String *token, int *NumberOfAlias) {
                     printf("Alias list full\n");
                     return;
                 }
-                for (a = 1 ; a <= 11; a++) {
+                for (int a = 1 ; a <= 11; a++) {
                     if ((strcmp(array[a].aliasName, token[2]) == 0) && (*NumberOfAlias > 0)) {
                         for (int d = 1; d <=11; d++) {
                             if ((strcmp(array[d].aliasCommand, token[1]) == 0)) {
-                            printf("Circular Alias");
-                            return;
+                                printf("Circular Alias \n");
+                                return;
                             }
                         }
                     }
