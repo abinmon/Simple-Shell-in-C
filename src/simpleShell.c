@@ -36,7 +36,15 @@ void readInput(String oldPath) {
     char history[ARR_SIZE][ARG_MAX] = {0};
     int cmdNumber = 0;
     int numAliases = 0;
+
+    printf("Previous history \n");
     previousHistory(&cmdNumber, history);
+    printf("\n");
+
+    printf("Previous alias \n");
+    loadAlias(&numAliases);
+    printf("\n");
+
     String copyBuffer;
 
     while (1) {
@@ -56,6 +64,7 @@ void readInput(String oldPath) {
             // Set working directory to home
             chwDir();
             writeHistory(history, &cmdNumber);
+            saveAlias(array , &numAliases);
             break;
         }
 
@@ -624,4 +633,65 @@ bool checkAlias(String *input) {
     }
     strcpy(*input, line);
     return status;
+}
+
+void saveAlias(aliases *input, const int *numAliases)
+{
+    FILE *fp;
+
+    //file pointer to open file
+    fp = fopen(".aliases", "w+");
+
+    //writing each line of alias
+    for (int i = 1; (i <= *numAliases) && (i <= MAX_ALIAS); i++) {
+        if ((strcmp(input[i].aliasName, "")) != 0 && (strcmp(input[i].aliasCommand, "") != 0))
+        {
+            fprintf(fp, "%s %s \n", input[i].aliasName, input[i].aliasCommand);
+        }
+    }
+    fclose(fp);
+}
+
+void loadAlias(int *numberOfAliases)
+{
+    static const char filename[] = ".aliases";
+    FILE *fp;
+    fp = fopen(filename, "r");
+
+    int index = 1;
+    int indexForCommand = 1;
+
+    if (fp != NULL) {
+        char line[ARG_MAX];
+
+        while (fgets(line, sizeof line, fp) != NULL) /* read a line */
+        {
+            String commandForAlias = malloc(sizeof(char) * ARG_MAX);
+
+            fputs(line, stdout); /* write the line */
+
+            char **tokensList = getTokens(line);
+
+            strcpy(array[index].aliasName, tokensList[0]);
+
+            // Used for storing parameters
+
+            while(tokensList[indexForCommand] != NULL)
+            {
+                strcat(commandForAlias, tokensList[indexForCommand]);
+                strcat(commandForAlias, "");
+                indexForCommand++;
+            }
+
+            strcpy(array[index].aliasCommand, commandForAlias);
+
+            index++;
+        }
+
+        *numberOfAliases = index;
+
+        fclose(fp);
+    } else {
+        printf("No previous aliases \n");
+    }
 }
