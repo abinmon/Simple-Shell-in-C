@@ -37,10 +37,11 @@ void readInput(String oldPath) {
     int cmdNumber = 0;
     int numAliases = 0;
 
-    printf("\nThe previous history\n");
+    printf("Previous history \n");
     previousHistory(&cmdNumber, history);
+    printf("\n");
 
-    printf("\nThe previous aliases\n");
+    printf("Previous alias \n");
     loadAlias(&numAliases);
     printf("\n");
 
@@ -63,10 +64,7 @@ void readInput(String oldPath) {
             // Set working directory to home
             chwDir();
             writeHistory(history, &cmdNumber);
-
-            char **tokens = getTokens(buffer);
-            saveAlias(tokens, &numAliases);
-
+            saveAlias(array , &numAliases);
             break;
         }
 
@@ -515,6 +513,7 @@ void addAlias(String *token, int *NumberOfAlias) {
     //If there is more than one command
     char wholeLineCommand[512] = {'\0'};
     int t = 2;
+
     if (token[1] == NULL) {
         if (*NumberOfAlias == 0) {
             printf("There are no current alias\n");
@@ -572,7 +571,9 @@ void addAlias(String *token, int *NumberOfAlias) {
                     return;
             }
         }
+
     }
+
 }
 
 void unAlias(String *token, int *NumberOfAliases) {
@@ -652,68 +653,61 @@ bool checkAlias(String *input) {
     return status;
 }
 
-void saveAlias(String *input, const int *numAliases)
+void saveAlias(aliases *input, const int *numAliases)
 {
     FILE *fp;
-    //file pointer to open file at desktop
+
+    //file pointer to open file
     fp = fopen(".aliases", "w+");
 
-    if (fp == NULL)
-    {
-        printf("\nError cannot open file");
-    }
-    //loop for max amount of alias
-    for(int i = 0; i < *numAliases ; i++)
-    {
-        if (array[i + 1].aliasName != NULL)
+    //writing each line of alias
+    for (int i = 1; (i <= *numAliases) && (i <= MAX_ALIAS); i++) {
+        if ((strcmp(input[i].aliasName, "")) != 0 && (strcmp(input[i].aliasCommand, "") != 0))
         {
-            fprintf(fp,"%s  %s\n", array[i].aliasName, array[i].aliasCommand);
+            fprintf(fp, "%s %s \n", input[i].aliasName, input[i].aliasCommand);
         }
     }
     fclose(fp);
 }
 
-void loadAlias(int *NumberOfAliases)
+void loadAlias(int *numberOfAliases)
 {
-    //moving to where file is located
+    static const char filename[] = ".aliases";
     FILE *fp;
-    fp = fopen(".aliases", "r+");
+    fp = fopen(filename, "r");
 
-    //making sure there is something to open else display message
-    if (fp != NULL)
-    {
-        int i = 0;
-        int j = 0;
+    int index = 1;
+
+    if (fp != NULL) {
         char line[ARG_MAX];
 
-        while ( fgets ( line, sizeof line, fp ) != NULL )
+        while (fgets(line, sizeof line, fp) != NULL) /* read a line */
         {
-            char aliasName[ARG_MAX];
-            char command[ARG_MAX];
+            String commandForAlias = malloc(sizeof(char) * ARG_MAX);
 
-            int result;
-            result = sscanf(line, "%s %[^\n]", aliasName, command);
+            fputs(line, stdout); /* write the line */
 
-            if (result < 2)
+            char **tokensList = getTokens(line);
+            int indexForCommand = 1;
+
+            strcpy(array[index].aliasName, tokensList[0]);
+
+            // Used for storing parameters
+            while(tokensList[indexForCommand] != NULL)
             {
-                i++;
+                strcat(commandForAlias, tokensList[indexForCommand]);
+                strcat(commandForAlias, " ");
+                indexForCommand++;
             }
-            else
-            {
-                fputs(line, stdout);
-                strcpy(array[i].aliasName, aliasName);
-                strcpy(array[i].aliasCommand, command);
-                i++;
-            }
+            strcpy(array[index].aliasCommand, commandForAlias);
 
-            //strcpy(array[i].aliasCommand, line);
-            //printf(0);
+            index++;
         }
+
+        *numberOfAliases = index;
+
         fclose(fp);
-        *NumberOfAliases = i;
-    }
-    else
-    {
-        printf("No previous aliases to load.\n");
+    } else {
+        printf("No previous aliases \n");
     }
 }
