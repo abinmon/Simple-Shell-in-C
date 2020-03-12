@@ -75,7 +75,9 @@ void readInput(String oldPath) {
             // for getting num arguments
             getTokens(buffer);
             bool copyAlias = checkAlias(&buffer);
-            copyAlias = checkAlias(&buffer);
+            while (copyAlias != false) {
+                copyAlias = checkAlias(&buffer);
+            }
             checkInput(getTokens(buffer), buffer, history, &cmdNumber, true, &numAliases, copyBuffer, copyAlias);
         }
     }
